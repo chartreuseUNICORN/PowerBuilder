@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>PowerBuilder for Consultants</Name>
+    <Assembly>C:\Users\User\source\repos\PowerBuilder\PowerBuilder\bin\Debug\PowerBuilder.dll</Assembly>
+    <FullClassName>PowerBuilder.PowerBuilderApp</FullClassName>
+    <ClientId>8F4F5CEC-7818-441E-BA8A-9E53F2156E18</ClientId>
+    <VendorId>symetri-consulting-us</VendorId>
+    <VendorDescription>symetri consulting team</VendorDescription>
+  </AddIn>
+</RevitAddIns>
