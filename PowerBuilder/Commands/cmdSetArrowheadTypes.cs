@@ -19,6 +19,7 @@ namespace PowerBuilder.Commands
     [Transaction(TransactionMode.Manual)]
     public class cmdSetArrowheadTypes : IExternalCommand
     {
+        public static string DisplayName { get; } = "Set Arrowhead by Type";
         public Result Execute(
           ExternalCommandData commandData,
           ref string message,
