@@ -16,6 +16,7 @@ namespace PowerBuilder
     public class cmdSelectiveTransfer : IExternalCommand
     {
         public static string DisplayName { get; } = "Selective Transfer";
+        public static string ShortDescr { get; } = "Select Element Types to copy from the source document to the target document";
         public Result Execute(
           ExternalCommandData commandData,
           ref string message,
@@ -24,38 +25,36 @@ namespace PowerBuilder
             UIApplication uiapp = commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Application app = uiapp.Application;
-            Document doc = uidoc.Document;
-
-            // Access current selection
-
-            Selection sel = uidoc.Selection;
+            // In the other one, i called the active doc_tar and the others doc_src
+            Document doc_src = uidoc.Document;
 
             // Retrieve elements from database
 
-            FilteredElementCollector col
-              = new FilteredElementCollector(doc)
-                .WhereElementIsNotElementType()
-                .OfCategory(BuiltInCategory.INVALID)
-                .OfClass(typeof(Wall));
-
-            // Filtered element collector is iterable
-
-            foreach (Element e in col)
-            {
-                Debug.Print(e.Name);
-            }
-
-            // Modify document within a transaction
-
-            using (Transaction tx = new Transaction(doc))
-            {
-                tx.Start("Transaction Name");
-                tx.Commit();
-            }
+            DocumentSet openDocs = app.Documents;
+            FilteredElementCollector fec = new FilteredElementCollector(doc);
+            
 
             return Result.Succeeded;
         }
-        public void SelectiveTransfer(ICollection<ElementType> lSelectedTypes, Document src, Document tar) {
+        public void SelectiveTransfer(ICollection<ElementId> lSelectedTypes, Document src, Document tar) {
+
+            CopyPasteOptions cpOptions = new CopyPasteOptions();
+            
+            // Modify document within a transaction
+            using (Transaction tx = new Transaction(tar))
+            {
+                tx.Start("selective-transfer");
+                try
+                {
+                    ElementTransformUtils.CopyElements(src, lSelectedTypes, tar, null, cpOptions);
+                    tx.Commit();
+                }
+                catch {
+                    tx.Dispose();
+                }
+                
+            }
+
             throw new NotImplementedException("implement this method");
         }
     }
