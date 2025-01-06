@@ -1,4 +1,5 @@
-﻿using PowerBuilder;
+﻿using Autodesk.Revit.DB;
+using PowerBuilder;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,19 +12,25 @@ using System.Windows.Forms;
 
 namespace PowerBuilderUI
 {
-    public partial class frmSelectiveTransfer : Form
+    public partial class frmSelectiveTransfer : System.Windows.Forms.Form
     {
         private PBDialogResult _PBDialogResult;
+        private DocumentSet docs;
         public frmSelectiveTransfer()
         {
             InitializeComponent();
         }
-        public void AddItemsToCBox(object[] items)
+        public void AddItemsToCBox(IEnumerable<object> items)
         {
-            cbSelection1.Items.AddRange(items);
+            docs = items as DocumentSet;
+            cbSelection1.Items.AddRange(items.Cast<Document>().Select(t => t.Title) as object[]);
+
+            //add initial items to TreeView
         }
-        public void AddItemsToTreeView(object[] items)
+        public void AddItemsToTreeView(Document  docCurrent)
         {
+            // refresh tree view with elements in docCurrent not in docTarget
+            // i think this is why Target was the active document, pull other things into it..
             throw new NotImplementedException("implement this connection");
         }
         public PBDialogResult ShowDialogWithResult()
@@ -49,6 +56,16 @@ namespace PowerBuilderUI
                 IsAccepted = false,
             };
             this.Close();
+        }
+
+        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+
+        }
+
+        private void cbSelection1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

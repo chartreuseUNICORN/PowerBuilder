@@ -70,6 +70,7 @@ namespace PowerBuilderUI
             this.cbSelection1.Size = new System.Drawing.Size(289, 28);
             this.cbSelection1.TabIndex = 2;
             this.cbSelection1.Text = "Select Target Document";
+            this.cbSelection1.SelectedIndexChanged += new System.EventHandler(this.cbSelection1_SelectedIndexChanged);
             // 
             // treeView1
             // 
@@ -77,6 +78,7 @@ namespace PowerBuilderUI
             this.treeView1.Name = "treeView1";
             this.treeView1.Size = new System.Drawing.Size(289, 138);
             this.treeView1.TabIndex = 3;
+            this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             // 
             // frmSelectiveTransfer
             // 
