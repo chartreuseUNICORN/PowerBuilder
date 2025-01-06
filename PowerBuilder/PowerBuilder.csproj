@@ -58,11 +58,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\cmdSetArrowheadTypes.cs" />
+    <Compile Include="Commands\cmdSelectiveTransfer.cs" />
     <Compile Include="Forms\frmSetArrowheadTypes.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\frmSetArrowheadTypes.Designer.cs">
       <DependentUpon>frmSetArrowheadTypes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmSelectiveTransfer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmSelectiveTransfer.Designer.cs">
+      <DependentUpon>frmSelectiveTransfer.cs</DependentUpon>
     </Compile>
     <Compile Include="PBDialogResult.cs" />
     <Compile Include="Commands\Command2.cs" />
@@ -89,6 +96,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Forms\frmSetArrowheadTypes.resx">
       <DependentUpon>frmSetArrowheadTypes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmSelectiveTransfer.resx">
+      <DependentUpon>frmSelectiveTransfer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\test_frmCommand3.resx">
       <DependentUpon>test_frmCommand3.cs</DependentUpon>
