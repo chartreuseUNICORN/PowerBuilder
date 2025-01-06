@@ -15,6 +15,7 @@ namespace PowerBuilder
     [Transaction(TransactionMode.Manual)]
     public class Command1 : IExternalCommand
     {
+        public static string DisplayName { get; } = "Sample Command 1";
         public Result Execute(
           ExternalCommandData commandData,
           ref string message,
