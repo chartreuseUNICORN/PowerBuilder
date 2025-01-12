@@ -19,7 +19,7 @@ namespace PowerBuilder
     {
         public static string DisplayName { get; } = "Selective Transfer";
         public static string ShortDescr { get; } = "Select Element Types to copy from the source document to the target document";
-        public static bool CommandStatus = false;
+        public static bool LoadCommandFlag = true;
         public Result Execute(
           ExternalCommandData commandData,
           ref string message,
@@ -46,11 +46,11 @@ namespace PowerBuilder
 
             frmSelectiveTransfer SelectiveTransferForm = new frmSelectiveTransfer();
             //need to fix the types on for this interaction.
-            SelectiveTransferForm.AddItemsToCBox(openTargets.AsEnumerable<Document>());
+            SelectiveTransferForm.AddItemsToCBox(openTargets.ToList<Document>());
             PBDialogResult res =  SelectiveTransferForm.ShowDialogWithResult();
 
             if (res.IsAccepted) {
-                SelectiveTransfer(res.SelectionResults[1], res.SelectionResults[1], docTarget);
+                Debug.WriteLine("form submitted");
             }
 
             return Result.Succeeded;
