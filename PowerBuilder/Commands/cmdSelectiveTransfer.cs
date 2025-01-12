@@ -51,6 +51,9 @@ namespace PowerBuilder
 
             if (res.IsAccepted) {
                 Debug.WriteLine("form submitted");
+                Document docSource = (Document)res.SelectionResults[0];
+                List<ElementId> selectedIds = res.SelectionResults[1] as List<ElementId>;
+                SelectiveTransfer(selectedIds, docSource, docTarget);
             }
 
             return Result.Succeeded;

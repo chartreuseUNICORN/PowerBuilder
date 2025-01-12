@@ -83,17 +83,17 @@ namespace PowerBuilderUI
             ( "Filled Region Types", fec => fec.OfClass(typeof(FilledRegionType))),
             ( "Filters", fec => fec.OfClass(typeof(FilterElement))),
             ( "Floor Types", fec => fec.OfClass(typeof(FloorType)) ),
-            ("Grid Types", fec => fec.OfClass(typeof(GridType))),
-            ("Line Patterns", fec => fec.OfClass(typeof(LinePatternElement))),
-            ("Line Styles", fec => fec.OfClass(typeof(GraphicsStyle))),
-            ("Materials", fec => fec.OfClass(typeof(Material))),
-            ("Project Parameters", fec => fec.OfClass(typeof(ParameterElement))),
-            ("Roof Types", fec => fec.OfClass(typeof(RoofType))),
-            ("Section Tag Types", fec => fec.OfCategory(BuiltInCategory.OST_SectionHeads)),
-            ("Text Types", fec => fec.OfClass(typeof(TextNoteType))),
-            ("View Templates", fec => fec.OfClass(typeof(Autodesk.Revit.DB.View)).Cast<Autodesk.Revit.DB.View>().Where(v => v.IsTemplate) as FilteredElementCollector),
-            ("Viewport Types", fec => fec.OfClass(typeof(ElementType)).Cast<ElementType>().Where(et => et.FamilyName == "Viewport") as FilteredElementCollector),
-            ("Wall Types", fec => fec.OfClass(typeof(WallType)))
+            ( "Grid Types", fec => fec.OfClass(typeof(GridType))),
+            ( "Line Patterns", fec => fec.OfClass(typeof(LinePatternElement))),
+            ( "Line Styles", fec => fec.OfClass(typeof(GraphicsStyle))),
+            ( "Materials", fec => fec.OfClass(typeof(Material))),
+            ( "Project Parameters", fec => fec.OfClass(typeof(ParameterElement))),
+            ( "Roof Types", fec => fec.OfClass(typeof(RoofType))),
+            ( "Section Tag Types", fec => fec.OfCategory(BuiltInCategory.OST_SectionHeads)),
+            ( "Text Types", fec => fec.OfClass(typeof(TextNoteType))),
+            ( "View Templates", fec => fec.OfClass(typeof(Autodesk.Revit.DB.View)).Cast<Autodesk.Revit.DB.View>().Where<Autodesk.Revit.DB.View>(v => v.IsTemplate) as FilteredElementCollector),
+            ( "Viewport Types", fec => fec.OfClass(typeof(ElementType)).Cast<ElementType>().Where(et => et.FamilyName == "Viewport") as FilteredElementCollector),
+            ( "Wall Types", fec => fec.OfClass(typeof(WallType)))
         };
         public frmSelectiveTransfer()
         {
@@ -104,6 +104,7 @@ namespace PowerBuilderUI
             docs = items.Cast<Document>().ToList<Document>();
             string[] titles = docs.Select(t => t.Title).ToArray();
             cbSelectDocument.Items.AddRange(titles);
+            cbSelectDocument.Text = docs.First().Title;
             AddItemsToTreeView(docs.First());
             //add initial items to TreeView
         }
@@ -120,7 +121,8 @@ namespace PowerBuilderUI
                 TreeNode tnCurrentQuery = new TreeNode(queryName);
                 FilteredElementCollector fec = new FilteredElementCollector(docCurrent);
                 query(fec);
-                //i would love for this to be a tidy one-liner, but we'll do this for now
+                //TODO: simplify to one-liner
+                //should this also filter against what exists in the current document? technically no, because you may want to override.
                 
                 foreach (Element e in fec) {
                     TreeNode child = new TreeNode(e.Name);
@@ -140,7 +142,7 @@ namespace PowerBuilderUI
         }
         private void cbSelectDocument_SelectedIndexChanged(object sender, EventArgs e)
         {
-            tvElementTypeTree.TopNode.Text = cbSelectDocument.SelectedText;
+            if (tvElementTypeTree.TopNode != null) { tvElementTypeTree.TopNode.Text = cbSelectDocument.SelectedText; }
             int selected = cbSelectDocument.SelectedIndex;
             AddItemsToTreeView(docs[selected]);
         }
@@ -150,23 +152,24 @@ namespace PowerBuilderUI
             {
                 IsAccepted = true,
             };
-            _PBDialogResult.AddSelectionResult(cbSelectDocument.SelectedIndex);
+            _PBDialogResult.AddSelectionResult(docs[cbSelectDocument.SelectedIndex]);
             List<ElementId> SelectedElements = new List<ElementId>();
             //replace this with a tidy recursive implementation
+            //i think there's a whole more efficient way to get the selected results from the treeview
             foreach (TreeNode cur in tvElementTypeTree.Nodes)
             {
                 foreach (TreeNode l1 in cur.Nodes)
                 {
                     foreach (TreeNode l2 in l1.Nodes)
                     {
-                        SelectedElements.Add((ElementId)l2.Tag);
+                        if (l2.Checked) { SelectedElements.Add((ElementId)l2.Tag); }
                     }
                 }
             }
             _PBDialogResult.AddSelectionResult(SelectedElements);
             this.Close();
         }
-
+        //TODO: add hierarchical selection.
         private void btnCancel_Click(object sender, EventArgs e)
         {
             _PBDialogResult = new PBDialogResult
