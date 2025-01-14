@@ -1,126 +1,158 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
-      None
-    </ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
-    <TargetFrameworkProfile />
+    <UseWPF>false</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <NoWarn>CS8826</NoWarn>
+    <Nullable>disable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <PlatformTarget>x64</PlatformTarget>
+    <ImplicitUsings>true</ImplicitUsings>
+    <PublishAddinFiles>true</PublishAddinFiles>
+    <Configurations>Debug R21;Debug R22;Debug R23;Debug R24;Debug R25</Configurations>
+    <Configurations>$(Configurations);Release R21;Release R22;Release R23;Release R24;Release R25</Configurations>
   </PropertyGroup>
+  
+<!--DEBUG-->
+  <PropertyGroup Condition="$(Configuration.Contains('Debug'))">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <OutputPath>bin\Debug\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel><DefineConstants>$(DefineConstants);DEBUG; TRACE</DefineConstants>
+  </PropertyGroup>
+  
+<!--RELEASE-->
+  <PropertyGroup Condition="$(Configuration.Contains('Release'))">
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <OutputPath>bin/Release/$(RevitVersion)</OutputPath>
+    <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
+  </PropertyGroup>
+  
+<!--VERSION-CONFIGURATION-->
+  <PropertyGroup Condition="$(Configuration.Contains('R21'))">
+    <RevitVersion>2021</RevitVersion>
+    <DefineConstants>$(DefineConstants);R21</DefineConstants>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.Contains('R22'))">
+    <RevitVersion>2022</RevitVersion>
+    <DefineConstants>$(DefineConstants);R22</DefineConstants>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.Contains('R23'))">
+    <RevitVersion>2023</RevitVersion>
+    <DefineConstants>$(DefineConstants);R23</DefineConstants>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.Contains('R24'))">
+    <RevitVersion>2024</RevitVersion>
+    <DefineConstants>$(DefineConstants);R24</DefineConstants>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.Contains('R25'))">
+    <RevitVersion>2025</RevitVersion>
+    <DefineConstants>$(DefineConstants);R25</DefineConstants>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+  </PropertyGroup>
+
+<!--ASSEMBLY-->
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A0A2BA43-316D-416A-B88A-8F11A5A21D57}</ProjectGuid>
+    
+    <Version>$(RevitVersion)</Version><ProjectGuid>{321044f7-b0b2-4b1c-af18-e71a19252be0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PowerBuilder</RootNamespace>
     <AssemblyName>PowerBuilder</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <Version>$(RevitVersion)</Version>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Description>Specialized tools for BIM Consultants</Description>
+    <PublishSingleFile>true</PublishSingleFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <StartAction>Program</StartAction>
-    <StartProgram>$(ProgramW6432)\Autodesk\Revit 2024\Revit.exe</StartProgram>
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <StartAction>Program</StartAction>
-    <StartProgram>$(ProgramW6432)\Autodesk\Revit 2024\Revit.exe</StartProgram>
-  </PropertyGroup>
+
+<!--REFERENCES-->
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="RevitAPI">
-      <HintPath>$(ProgramW6432)\Autodesk\Revit 2024\RevitAPI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="RevitAPIUI">
-      <HintPath>$(ProgramW6432)\Autodesk\Revit 2024\RevitAPIUI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
+    <!--Revit references-->
+    <PackageReference Include="Nice3point.Revit.Build.Tasks" Version="2.*" />
+    <PackageReference Include="Nice3point.Revit.Toolkit" Version="$(RevitVersion).*" />
+    <PackageReference Include="Nice3point.Revit.Extensions" Version="$(RevitVersion).*" />
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="$(RevitVersion).*" />
+    <PackageReference Include="Nice3point.Revit.Api.AdWindows" Version="$(RevitVersion).*" />
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="$(RevitVersion).*" />
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPIMacros" Version="$(RevitVersion).*" />
+    <PackageReference Include="Nice3point.Revit.Api.UIFramework" Version="$(RevitVersion).*" />
+    <PackageReference Include="Nice3point.Revit.Api.UIFrameworkServices" Version="$(RevitVersion).*" />
+    
+    <!--MVVM-->
+    
+    <!--Logging-->
+    <PackageReference Include="Serilog.Sinks.Debug" Version="3.*" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.*" />
+    <PackageReference Include="Serilog.Sinks.Autodesk.Revit" Version="2.0.1" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="8.*" />
+  
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Commands\cmdSetArrowheadTypes.cs" />
-    <Compile Include="Commands\cmdSelectiveTransfer.cs" />
-    <Compile Include="Forms\frmSetArrowheadTypes.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\frmSetArrowheadTypes.Designer.cs">
-      <DependentUpon>frmSetArrowheadTypes.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\frmSelectiveTransfer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\frmSelectiveTransfer.Designer.cs">
-      <DependentUpon>frmSelectiveTransfer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PBDialogResult.cs" />
-    <Compile Include="Commands\Command2.cs" />
-    <Compile Include="Commands\Command3.cs" />
-    <Compile Include="Forms\test_frmCommand3.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\test_frmCommand3.Designer.cs">
-      <DependentUpon>test_frmCommand3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PowerBuilderApp.cs" />
-    <Compile Include="Commands\Command1.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserControl1.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UserControl1.Designer.cs">
-      <DependentUpon>UserControl1.cs</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="PowerBuilder.addin" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Forms\frmSetArrowheadTypes.resx">
-      <DependentUpon>frmSetArrowheadTypes.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmSelectiveTransfer.resx">
-      <DependentUpon>frmSelectiveTransfer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\test_frmCommand3.resx">
-      <DependentUpon>test_frmCommand3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UserControl1.resx">
-      <DependentUpon>UserControl1.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  
+  <!--POST-BUILD-->
   <PropertyGroup>
-    <PostBuildEvent>if exist "$(AppData)\Autodesk\REVIT\Addins\2024" copy "$(ProjectDir)*.addin" "$(AppData)\Autodesk\REVIT\Addins\2024"
-if exist "$(AppData)\Autodesk\REVIT\Addins\2024" copy "$(ProjectDir)$(OutputPath)*.dll" "$(AppData)\Autodesk\REVIT\Addins\2024"</PostBuildEvent>
+    <StartAction>Program</StartAction>
+    <StartProgram>C:\Program Files\Autodesk\Revit $(RevitVersion)\Revit.exe</StartProgram>
+    <StartArguments>/language ENG</StartArguments>
+    <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
   </PropertyGroup>
+  <Target Name="CopyFiles" AfterTargets="CoreBuild">
+    <ItemGroup>
+      <RootItem Include="$(ProjectDir)*.addin" />
+      <AddinItem Include="$(TargetDir)*.dll" />
+      <AddinItem Include="$(TargetDir)*.pdb" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <RootDir>bin\AddIn $(RevitVersion) $(Configuration)\</RootDir>
+      <AddinDir>$(RootDir)$(AssemblyName)\</AddinDir>
+    </PropertyGroup>
+
+    <Copy SourceFiles="@(RootItem)" DestinationFolder="$(RootDir)" />
+    <Copy SourceFiles="@(AddinItem)" DestinationFolder="$(AddinDir)" />
+
+    <ItemGroup>
+      <AddinFiles Include="$(RootDir)**\*.*" />
+    </ItemGroup>
+    <Message Text="Copy files to Addin folder" Importance="high" />
+    <Copy SourceFiles="@(AddinFiles)" DestinationFolder="$(AppData)\Autodesk\Revit\Addins\$(RevitVersion)\%(RecursiveDir)" Condition="$(Configuration.Contains('Debug'))" />
+  </Target>
+  <ItemGroup>
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="2025.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Update="mscorlib">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
+  <PropertyGroup>
+    <PostBuildEvent>
+      if exist "$(AppData)\Autodesk\REVIT\Addins\$(RevitVersion)" copy "$(SolutionDir)*.addin" "$(AppData)\Autodesk\REVIT\Addins\$(RevitVersion)"
+      if exist "$(AppData)\Autodesk\REVIT\Addins\$(RevitVersion)" copy "$(SolutionDir)$(OutputPath)*.dll" "$(AppData)\Autodesk\REVIT\Addins\$(RevitVersion)"</PostBuildEvent>
+  </PropertyGroup>
+  
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
   </Target>
-  -->
+  
   <Target Name="AfterClean">
-    <Delete Files="$(AppData)\Autodesk\REVIT\Addins\2024\PowerBuilder.addin" />
-    <Delete Files="$(AppData)\Autodesk\REVIT\Addins\2024\PowerBuilder.dll" />
+    <Delete Files="$(AppData)\Autodesk\REVIT\Addins\(RevitVersion)\PowerBuilder.addin" />
+    <Delete Files="$(AppData)\Autodesk\REVIT\Addins\(RevitVersion)\PowerBuilder.dll" />
   </Target>
+  -->
 </Project>
