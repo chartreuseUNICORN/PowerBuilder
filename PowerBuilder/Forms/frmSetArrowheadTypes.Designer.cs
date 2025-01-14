@@ -1,4 +1,4 @@
-﻿namespace PowerBuilder.Forms
+﻿namespace PowerBuilderUI.Forms
 {
     partial class frmSetArrowheadTypes
     {
@@ -37,7 +37,7 @@
             // 
             // cbSelectArrowhead
             // 
-            this.cbSelectArrowhead.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.cbSelectArrowhead.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbSelectArrowhead.FormattingEnabled = true;
             this.cbSelectArrowhead.Location = new System.Drawing.Point(18, 18);
@@ -48,7 +48,7 @@
             // 
             // clbSelectTargets
             // 
-            this.clbSelectTargets.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.clbSelectTargets.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.clbSelectTargets.CheckOnClick = true;
             this.clbSelectTargets.FormattingEnabled = true;

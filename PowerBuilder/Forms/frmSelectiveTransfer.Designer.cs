@@ -22,7 +22,7 @@ namespace PowerBuilderUI.Forms
             base.Dispose(disposing);
         }
 
-        
+
 
         #region Windows Form Designer generated code
 
@@ -69,7 +69,7 @@ namespace PowerBuilderUI.Forms
             // 
             // cbSelectDocument
             // 
-            this.cbSelectDocument.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.cbSelectDocument.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbSelectDocument.FormattingEnabled = true;
             this.cbSelectDocument.Location = new System.Drawing.Point(13, 13);
@@ -81,8 +81,8 @@ namespace PowerBuilderUI.Forms
             // 
             // tvElementTypeTree
             // 
-            this.tvElementTypeTree.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.tvElementTypeTree.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tvElementTypeTree.BackColor = System.Drawing.Color.White;
             this.tvElementTypeTree.CheckBoxes = true;

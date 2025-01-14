@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using PowerBuilderUI.Forms;
 
 #endregion
 
@@ -27,7 +28,7 @@ namespace PowerBuilder.Commands
         {
             UIApplication uiapp = commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
-            Application app = uiapp.Application;
+            Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
             // In the other one, i called the active doc_tar and the others doc_src
             Document docTarget = uidoc.Document;
 
