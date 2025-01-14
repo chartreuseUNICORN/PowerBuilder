@@ -22,7 +22,7 @@ namespace PowerBuilderUI.Forms
             base.Dispose(disposing);
         }
 
-        
+
 
         #region Windows Form Designer generated code
 
@@ -61,7 +61,7 @@ namespace PowerBuilderUI.Forms
             // 
             // cbSelection1
             // 
-            this.cbSelection1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.cbSelection1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbSelection1.FormattingEnabled = true;
             this.cbSelection1.Location = new System.Drawing.Point(13, 13);
