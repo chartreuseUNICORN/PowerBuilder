@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace PowerBuilderUI
+namespace PowerBuilderUI.Forms
 {
     public partial class frmSelectiveTransfer : System.Windows.Forms.Form
     {
