@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace PowerBuilder.Forms
 {
-    public partial class frmSetArrowheadTypes : Form
+    public partial class frmSetArrowheadTypes : System.Windows.Forms.Form
     {
         private PBDialogResult _PBDialogResult;
         public frmSetArrowheadTypes()
