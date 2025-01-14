@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PowerBuilderUI
+namespace PowerBuilderUI.Forms
 {
     partial class test_frmCommand3
     {

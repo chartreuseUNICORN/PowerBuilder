@@ -12,7 +12,7 @@ using System.Linq;
 
 #endregion
 
-namespace PowerBuilder
+namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
     public class cmdSelectiveTransfer : IExternalCommand
