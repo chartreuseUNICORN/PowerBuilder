@@ -9,9 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace PowerBuilderUI
+namespace PowerBuilderUI.Forms
 {
-    public partial class test_frmCommand3 : Form
+    public partial class test_frmCommand3 : System.Windows.Forms.Form
     {
         private PBDialogResult _PBDialogResult;
         public test_frmCommand3()

@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 #endregion
 
-namespace PowerBuilder
+namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
     public class Command1 : IExternalCommand
@@ -23,7 +23,7 @@ namespace PowerBuilder
         {
             UIApplication uiapp = commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
-            Application app = uiapp.Application;
+            Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
             Document doc = uidoc.Document;
 
             // Access current selection

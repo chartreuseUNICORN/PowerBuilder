@@ -7,10 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using PowerBuilder;
 
-namespace PowerBuilder.Forms
+namespace PowerBuilderUI.Forms
 {
-    public partial class frmSetArrowheadTypes : Form
+    public partial class frmSetArrowheadTypes : System.Windows.Forms.Form
     {
         private PBDialogResult _PBDialogResult;
         public frmSetArrowheadTypes()
