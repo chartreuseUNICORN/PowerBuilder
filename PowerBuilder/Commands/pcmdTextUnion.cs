@@ -16,9 +16,9 @@ namespace PowerBuilder.Commands {
 
     [Transaction(TransactionMode.Manual)]
     public class pcmdTextUnion : IPowerCommand {
-        string IPowerCommand.DisplayName => "Text Union";
-        string IPowerCommand.ShortDesc => "Concatenate TextNote contents into one TextNote";
-        bool IPowerCommand.RibbonIncludeFlag => true;
+        string IPowerCommand.DisplayName { get; } = "Text Union";
+        string IPowerCommand.ShortDesc { get; } =  "Concatenate TextNote contents into one TextNote";
+        bool IPowerCommand.RibbonIncludeFlag { get; } = true;
 
         
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements) {
