@@ -12,7 +12,12 @@ namespace PowerBuilder.SelectionHelpers {
             _cat = cat;
         }
         public bool AllowElement(Element elem) {
-            return elem.Category.BuiltInCategory == _cat;
+            if (elem.Category != null) {
+                return elem.Category.BuiltInCategory == _cat;
+            }
+            else {
+                return false;
+            }
         }
         public bool AllowReference(Reference reference, XYZ position) {
             return false;
