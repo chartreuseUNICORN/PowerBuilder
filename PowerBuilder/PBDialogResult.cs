@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace PowerBuilder
 {
+    /// <summary>
+    /// Container for User Input results.  First element 'IsAccepted' indicates the run status.  Successful input collection results in True,
+    /// canceled or failed collection results in false.  The second element 'SelectionResults' is a container for collected objects, most 
+    /// commonly this will contain lists of selections or run modes.
+    /// </summary>
     public class PBDialogResult
     {
         public bool IsAccepted { get; set; }
@@ -15,33 +20,34 @@ namespace PowerBuilder
         {
             SelectionResults = new List<object>();
         }
-
-        // Method to add a single selection result
+        // i don't know if any of these are necessary.  maybe if we make the selection results private, then there needs to be some way to access them
+        /// <summary>
+        /// Add an object to the selection results
+        /// </summary>
+        /// <param name="result">object to add to the selection results</param>
         public void AddSelectionResult(object result)
         {
             SelectionResults.Add(result);
         }
 
-        // Method to get a selection result by index
+        /// <summary>
+        /// Return the selection result an an indicated index, cast to an indicated type <T>
+        /// </summary>
+        /// <typeparam name="T">casting type</typeparam>
+        /// <param name="index">result item index</param>
+        /// <returns></returns>
         public T GetSelectionResult<T>(int index)
         {
             return (T)SelectionResults[index];
         }
 
-        // Method to clear all selection results
+        /// <summary>
+        /// Empty the SelectionResults list
+        /// </summary>
         public void ClearSelectionResults()
         {
             SelectionResults.Clear();
         }
-        // how/where does the unwrapping of inputs need to occur. i guess this is something where this whole type
-        // thing makes you have to think just a litle bit more..
-        // things we may run into:
-        //      boolean     mode controller
-        //      int[]       ListBox, CheckedListBox selection
-        //      int         combobox selection, integer clicker
-        //      double/float    number input
-        //      string      string inputs
-        // maybe List<object> is fine? is it possible to store it as (<T>,value) tuples?
     }
 
 }
