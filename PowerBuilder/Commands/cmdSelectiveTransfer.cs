@@ -50,6 +50,7 @@ namespace PowerBuilder.Commands
             SelectiveTransferForm.AddItemsToCBox(openTargets.ToList<Document>());
             PBDialogResult res =  SelectiveTransferForm.ShowDialogWithResult();
 
+            //TODO: add handling for emtpy selection
             if (res.IsAccepted) {
                 Debug.WriteLine("form submitted");
                 Document docSource = (Document)res.SelectionResults[0];

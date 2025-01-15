@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,66 +18,43 @@ namespace PowerBuilderUI.Forms
     {
         private PBDialogResult _PBDialogResult;
         private List<Document> docs;
-        /* here's the original list from Transfer Project Standards
-         * ["Analytical Link Types",
-            "Arrowhead Styles",
+        /* remaining list of 'things' to include
+         *  "Analytical Link Types",
             #"Bending Detail",
-            "Callout Tags",
-            "Ceiling Types",
-            "Color Fill Schemes",
-            "Construction Types",
-            "Curtain System Types",
-            "Curtain Wall Types",
             "Cut Mark Types",
-            "Dimension Styles",
-            "Elevation Tag Types",
-            "Fill Patterns",
-            "Filled Region Types",
-            "Filters",
-            "Floor Types",
             "Foundation Slab Types",
-            "Grid Types",
             "Handrail Types",
             "Level Types",
-            "Line Patterns",
-            "Line Styles",
             #"Line Weights",
             #"Load Types",
-            "Materials",
             "Model Text Types",
             #"Object Styles",
             "Phase Settings",
-            "Project Parameters",
             "Railing Types",
             "Ramp Types",
             "Repeating Detail Types",
             "Reveal Types",
             "Revision Numbering Sequences",
-            "Roof Types",
-            "Section Tag Types",
             "Sloped Glazing Types",
             "Stair Path Types",
             "Stair Types",
-            "Text Types",
             "Top Rail Types",
             "Toposolid Types",
             "View Reference Types",
-            "View Templates",
-            "Viewport Types",
             "Wall sweep Types",
-            "Wall Types",
-            ]
+            
             implement the specific collectors for these after we get the simple sample working
             QUESTION: is there ever a world where we store some of these collectors in its own query?
          */
-        private List<(string, Func<FilteredElementCollector, FilteredElementCollector>)> queries = new List<(string, Func<FilteredElementCollector, FilteredElementCollector>)>(){
+        //maybe the switch expression does this just the same
+        private List<(string queryName, Func<FilteredElementCollector, FilteredElementCollector> method)> queries = new List<(string, Func<FilteredElementCollector, FilteredElementCollector>)>(){
 
             ( "Callout Tags", fec => fec.OfCategory(BuiltInCategory.OST_CalloutHeads) ),
             ( "Ceiling Types", fec => fec.OfClass(typeof(CeilingType)) ),
             ( "Color Fill Schemes", fec => fec.OfClass(typeof(ColorFillScheme)) ),
             ( "Construction Types", fec => fec.OfCategory(BuiltInCategory.OST_EAConstructions) ),
             ( "Curtain System Types", fec => fec.OfClass(typeof(CurtainSystemType)) ),
-            ( "Curtain Wall Types", fec => fec.OfClass(typeof(WallType)).Cast<WallType>().Where(wt => wt.Kind == WallKind.Curtain) as FilteredElementCollector ),
+            ( "Curtain Wall Types", fec => fec.OfClass(typeof(WallType)).Cast<WallType>().Where(wt => wt.Kind == WallKind.Curtain) as FilteredElementCollector),
             ( "Dimension Styles", fec => fec.OfClass(typeof(DimensionType)) ),
             ( "Elevation Tag Types", fec => fec.OfClass(typeof(ElementType)).Cast<ElementType>().Where(et => et.FamilyName == "Elevation Tag") as FilteredElementCollector ),
             ( "Fill Patterns", fec => fec.OfClass(typeof(FillPatternElement))),
@@ -91,9 +69,10 @@ namespace PowerBuilderUI.Forms
             ( "Roof Types", fec => fec.OfClass(typeof(RoofType))),
             ( "Section Tag Types", fec => fec.OfCategory(BuiltInCategory.OST_SectionHeads)),
             ( "Text Types", fec => fec.OfClass(typeof(TextNoteType))),
-            ( "View Templates", fec => fec.OfClass(typeof(Autodesk.Revit.DB.View)).Cast<Autodesk.Revit.DB.View>().Where<Autodesk.Revit.DB.View>(v => v.IsTemplate) as FilteredElementCollector),
+            ( "View Templates", fec => fec.OfClass(typeof(Autodesk.Revit.DB.View)).Cast<Autodesk.Revit.DB.View>().Where(v => v.IsTemplate) as FilteredElementCollector),
             ( "Viewport Types", fec => fec.OfClass(typeof(ElementType)).Cast<ElementType>().Where(et => et.FamilyName == "Viewport") as FilteredElementCollector),
-            ( "Wall Types", fec => fec.OfClass(typeof(WallType)))
+            ( "Wall Types", fec => fec.OfClass(typeof(WallType))),
+            ( "Arrowhead Types", fec => fec.OfClass(typeof(ElementType)).Cast<ElementType>().Where(et => et.FamilyName == "Arrowhead") as FilteredElementCollector),
         };
         public frmSelectiveTransfer()
         {
@@ -112,21 +91,24 @@ namespace PowerBuilderUI.Forms
         {
             // originally built this to mirror the built-in transfer project standards command
             // maybe we open the list of targets to .. Family Types (Annotation, Model Category)
+            
             tvElementTypeTree.BeginUpdate();
             tvElementTypeTree.Nodes.Clear();
             TreeNode root = new TreeNode(docCurrent.Title);
             
-            foreach ((string queryName, Func<FilteredElementCollector,FilteredElementCollector> query) in queries)
+            foreach ((string queryName, Func<FilteredElementCollector,FilteredElementCollector> query) in queries.OrderBy(x => x.queryName))
             {
                 TreeNode tnCurrentQuery = new TreeNode(queryName);
-                FilteredElementCollector fec = new FilteredElementCollector(docCurrent);
-                query(fec);
-                //TODO: simplify to one-liner
-                //should this also filter against what exists in the current document? technically no, because you may want to override.
+                //FilteredElementCollector fec = new FilteredElementCollector(docCurrent);
+                //query(fec);
+                //TODO: this is mess, but it works.  i think the original approach was good, just not working.
+                List<(string displayName, ElementId eid)> fec = HelperGetElementsByQuery(queryName, docCurrent).ToList< (string displayName, ElementId eid)>();
                 
-                foreach (Element e in fec) {
-                    TreeNode child = new TreeNode(e.Name);
-                    child.Tag = e.Id;
+                //TODO: simplify to one-liner
+                foreach ((string displayName, ElementId eid) e in fec) {
+                    //TODO: set text color if element exists in the active document
+                    TreeNode child = new TreeNode(e.displayName);
+                    child.Tag = e.eid;
                     tnCurrentQuery.Nodes.Add(child);
                 }
                 root.Nodes.Add(tnCurrentQuery);
@@ -134,7 +116,69 @@ namespace PowerBuilderUI.Forms
             tvElementTypeTree.Nodes.Add(root);
             tvElementTypeTree.EndUpdate();
         }
-        
+        private IEnumerable<(string displayName, ElementId eid)> HelperGetElementsByQuery(string query, Document doc) => query switch
+        {
+            "Arrowhead Types" => new FilteredElementCollector(doc).OfClass(typeof(ElementType)).WhereElementIsElementType()
+                .Cast<ElementType>()
+                .Where(et => et.FamilyName == "Arrowhead")
+                .Select(x => (x.Name, x.Id)),
+            "Callout Tags" => new FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_CalloutHeads)
+                .WhereElementIsElementType()
+                .Select(x => (x.Name, x.Id)) ,
+            "Ceiling Types"=> new FilteredElementCollector(doc).OfClass(typeof(CeilingType)).WhereElementIsElementType()
+                .Select(x => (x.Name, x.Id)),
+            "Color Fill Schemes"=> new FilteredElementCollector(doc).OfClass(typeof(ColorFillScheme))
+                .Select(x => (x.Name, x.Id)),
+            "Construction Types"=> new FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_EAConstructions)
+                .Select(x => (x.Name, x.Id)),
+            "Curtain System Types"=> new FilteredElementCollector(doc).OfClass(typeof(CurtainSystemType)).WhereElementIsElementType()
+                .Select(x => (x.Name, x.Id)),
+            "Curtain Wall Types"=> new FilteredElementCollector(doc).OfClass(typeof(WallType)).WhereElementIsElementType()
+                .Cast<WallType>()
+                .Where(wt => wt.Kind == WallKind.Curtain)
+                .Select(x => (x.Name, x.Id)),
+            "Dimension Styles"=> new FilteredElementCollector(doc).OfClass(typeof(DimensionType))
+                .Select(x => (x.Name, x.Id)),
+            "Elevation Tag Types"=> new FilteredElementCollector(doc).OfClass(typeof(ElementType)).WhereElementIsElementType()
+                .Cast<ElementType>()
+                .Where(et => et.FamilyName == "Elevation Tag")
+                .Select(x => (x.Name, x.Id)),
+            "Fill Patterns"=> new FilteredElementCollector(doc).OfClass(typeof(FillPatternElement))
+                .Select(x => (x.Name, x.Id)),
+            "Filled Region Types"=> new FilteredElementCollector(doc).OfClass(typeof(FilledRegionType)).WhereElementIsElementType()
+                .Select(x => (x.Name, x.Id)),
+            "Filters"=> new FilteredElementCollector(doc).OfClass(typeof(FilterElement))
+                .Select(x => (x.Name, x.Id)),
+            "Floor Types"=> new FilteredElementCollector(doc).OfClass(typeof(FloorType)).WhereElementIsElementType()
+                .Select(x => (x.Name, x.Id)),
+            "Grid Types"=> new FilteredElementCollector(doc).OfClass(typeof(GridType)).WhereElementIsElementType()
+                .Select(x => (x.Name, x.Id)),
+            "Line Patterns"=> new FilteredElementCollector(doc).OfClass(typeof(LinePatternElement))
+                .Select(x => (x.Name, x.Id)),
+            "Line Styles"=> new FilteredElementCollector(doc).OfClass(typeof(GraphicsStyle))
+                .Select(x => (x.Name, x.Id)),
+            "Materials"=> new FilteredElementCollector(doc).OfClass(typeof(Material))
+                .Select(x => (x.Name, x.Id)),
+            "Project Parameters"=> new FilteredElementCollector(doc).OfClass(typeof(ParameterElement))
+                .Select(x => (x.Name, x.Id)),
+            "Roof Types"=> new FilteredElementCollector(doc).OfClass(typeof(RoofType)).WhereElementIsElementType()
+                .Select(x => (x.Name, x.Id)),
+            "Section Tag Types"=> new FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_SectionHeads).WhereElementIsElementType()
+                .Select(x => (x.Name, x.Id)),
+            "Text Types"=> new FilteredElementCollector(doc).OfClass(typeof(TextNoteType))
+                .Select(x => (x.Name, x.Id)),
+            "View Templates"=> new FilteredElementCollector(doc).OfClass(typeof(Autodesk.Revit.DB.View))
+                .Cast<Autodesk.Revit.DB.View>()
+                .Where(v => v.IsTemplate)
+                .Select(x => (x.Name, x.Id)),
+            "Viewport Types"=> new FilteredElementCollector(doc).OfClass(typeof(ElementType)).WhereElementIsElementType()
+                .Cast<ElementType>()
+                .Where(et => et.FamilyName == "Viewport")
+                .Select(x => (x.Name, x.Id)),
+            "Wall Types"=> new FilteredElementCollector(doc).OfClass(typeof(WallType)).WhereElementIsElementType()
+                .Select(x => (x.Name, x.Id)),
+            _ => throw new KeyNotFoundException($"{query} is not a valid key"),
+        };
         public PBDialogResult ShowDialogWithResult()
         {
             this.ShowDialog();
