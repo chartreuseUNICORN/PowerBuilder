@@ -24,7 +24,7 @@
         /// </summary>
         private void InitializeComponent() {
             this.btnAccept = new System.Windows.Forms.Button();
-            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.tvDependencyMap = new System.Windows.Forms.TreeView();
             this.SuspendLayout();
             // 
             // btnAccept
@@ -38,15 +38,15 @@
             this.btnAccept.UseVisualStyleBackColor = true;
             this.btnAccept.Click += new System.EventHandler(this.btnAccept_Click);
             // 
-            // treeView1
+            // tvDependencyMap
             // 
-            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.tvDependencyMap.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeView1.Location = new System.Drawing.Point(12, 12);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(309, 426);
-            this.treeView1.TabIndex = 1;
+            this.tvDependencyMap.Location = new System.Drawing.Point(12, 12);
+            this.tvDependencyMap.Name = "tvDependencyMap";
+            this.tvDependencyMap.Size = new System.Drawing.Size(309, 426);
+            this.tvDependencyMap.TabIndex = 1;
             // 
             // frmDependencyMapper
             // 
@@ -54,7 +54,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(326, 484);
-            this.Controls.Add(this.treeView1);
+            this.Controls.Add(this.tvDependencyMap);
             this.Controls.Add(this.btnAccept);
             this.Name = "frmDependencyMapper";
             this.Text = "Dependency Map";
@@ -65,6 +65,6 @@
         #endregion
 
         private Button btnAccept;
-        private TreeView treeView1;
+        private TreeView tvDependencyMap;
     }
 }

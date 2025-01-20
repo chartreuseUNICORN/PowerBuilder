@@ -1,12 +1,14 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+using PowerBuilder.Forms;
 using PowerBuilder.SelectionHelpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
 
 namespace PowerBuilder.Commands {
     [Transaction(TransactionMode.Manual)]
@@ -21,7 +23,13 @@ namespace PowerBuilder.Commands {
             Document doc = uidoc.Document;
 
             PBDialogResult res = GetInput(uiapp);
-            ShowDependencyMap(doc, res.SelectionResults[0] as ElementId);
+            ElementId target = res.SelectionResults[0] as ElementId;
+            frmDependencyMapper form = new frmDependencyMapper();
+            Dictionary<ElementId, List<ElementId>> map = BuildDependencyMap(doc, target);
+
+            form.AddItemsToTreeView(doc, target, map);
+            form.ShowDialog();
+            
             
             return Result.Succeeded;
         }
@@ -47,7 +55,7 @@ namespace PowerBuilder.Commands {
 
             return res;
         }
-        public void ShowDependencyMap (Document doc,ElementId target) {
+        public Dictionary<ElementId, List<ElementId>> BuildDependencyMap (Document doc,ElementId target) {
             //
             Dictionary<ElementId,List < ElementId >> depMap = new Dictionary<ElementId, List<ElementId>>();
             IList<ElementId> dependents;
@@ -65,21 +73,29 @@ namespace PowerBuilder.Commands {
             }
             else {
                 Element eType = doc.GetElement(elem.GetTypeId());
-                dependents = eType.GetDependentElements(new ElementClassFilter(eType.GetType()));
+                dependents = eType.GetDependentElements(new ElementCategoryFilter(eType.Category.BuiltInCategory));
 
                 // i think there's a really tidy way to do this using linq and .GroupBy
                 
             }
 
             foreach (ElementId eid in dependents) {
-                ElementId viewId = doc.GetElement(eid).OwnerViewId;
-                if (depMap.ContainsKey(viewId)) {
-                    depMap[viewId].Add(eid);
+                Element depElement = doc.GetElement(eid);
+                ElementId branchEid;
+                if (depElement.OwnerViewId.Value != -1) {
+                    branchEid = depElement.OwnerViewId;
                 }
                 else {
-                    depMap.Add(viewId, new List<ElementId>() { eid });
+                    branchEid = depElement.Id;
+                }
+                if (depMap.ContainsKey(branchEid)) {
+                    depMap[branchEid].Add(eid);
+                }
+                else {
+                    depMap.Add(branchEid, new List<ElementId>() { eid });
                 }
             }
+            return depMap;
         }
         
     }
