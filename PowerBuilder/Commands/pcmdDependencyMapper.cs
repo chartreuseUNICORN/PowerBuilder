@@ -60,19 +60,17 @@ namespace PowerBuilder.Commands {
             Dictionary<ElementId,List < ElementId >> depMap = new Dictionary<ElementId, List<ElementId>>();
             IList<ElementId> dependents;
             Element elem = doc.GetElement(target);
-            
+            Element eType = doc.GetElement(elem.GetTypeId());
+
             if (elem is CurveElement) {
                 Element lStyle = ((CurveElement)elem).LineStyle;
                 dependents = new FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Lines).ToElementIds().Cast<CurveElement>().Where(x => x.LineStyle == lStyle) as IList<ElementId>;
             }
             else if (elem is Material) {
-                throw new NotImplementedException("Please Implement CurveElement mode");
-            }
-            else if (elem is TextNote) {
-                throw new NotImplementedException("Please Implement TextNote mode");
+                throw new NotImplementedException("Please Implement Material mode");
             }
             else {
-                Element eType = doc.GetElement(elem.GetTypeId());
+                
                 dependents = eType.GetDependentElements(new ElementCategoryFilter(eType.Category.BuiltInCategory));
 
                 // i think there's a really tidy way to do this using linq and .GroupBy
@@ -82,11 +80,23 @@ namespace PowerBuilder.Commands {
             foreach (ElementId eid in dependents) {
                 Element depElement = doc.GetElement(eid);
                 ElementId branchEid;
+                /* how should the graphic representation of this be.  think about it.
+                 ownership by:
+                    _ Type
+                    View
+                        Legend
+                    Group (?)
+                    subcomponent
+                    Schedule (Text)
+                    Sketch (line style)
+
+                    Is checking something about subcategories a different thing?
+                 * */
                 if (depElement.OwnerViewId.Value != -1) {
                     branchEid = depElement.OwnerViewId;
                 }
                 else {
-                    branchEid = depElement.Id;
+                    branchEid = eType.Id;
                 }
                 if (depMap.ContainsKey(branchEid)) {
                     depMap[branchEid].Add(eid);
