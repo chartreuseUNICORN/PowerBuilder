@@ -1,4 +1,5 @@
 ﻿using Autodesk.Revit.DB;
+using Autodesk.Revit.DB.Plumbing;
 using PowerBuilder;
 using System;
 using System.Collections.Generic;
@@ -73,6 +74,8 @@ namespace PowerBuilderUI.Forms
             ( "Viewport Types", fec => fec.OfClass(typeof(ElementType)).Cast<ElementType>().Where(et => et.FamilyName == "Viewport") as FilteredElementCollector),
             ( "Wall Types", fec => fec.OfClass(typeof(WallType))),
             ( "Arrowhead Types", fec => fec.OfClass(typeof(ElementType)).Cast<ElementType>().Where(et => et.FamilyName == "Arrowhead") as FilteredElementCollector),
+            ( "Pipe Types", fec => fec.OfClass(typeof(PipeType)).WhereElementIsElementType()),
+            ( "Piping System Types", fec => fec.OfClass(typeof(PipingSystemType)).WhereElementIsElementType())
         };
         public frmSelectiveTransfer()
         {
