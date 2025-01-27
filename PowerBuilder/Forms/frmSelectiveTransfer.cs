@@ -180,6 +180,10 @@ namespace PowerBuilderUI.Forms
                 .Select(x => (x.Name, x.Id)),
             "Wall Types"=> new FilteredElementCollector(doc).OfClass(typeof(WallType)).WhereElementIsElementType()
                 .Select(x => (x.Name, x.Id)),
+            "Pipe Types" => new FilteredElementCollector(doc).OfClass(typeof(PipeType)).WhereElementIsElementType()
+                .Select(x => (x.Name, x.Id)),
+            "Piping System Types" => new FilteredElementCollector(doc).OfClass(typeof(PipeSystemType)).WhereElementIsElementType()
+                .Select(x => (x.Name, x.Id)),
             _ => throw new KeyNotFoundException($"{query} is not a valid key"),
         };
         public PBDialogResult ShowDialogWithResult()
