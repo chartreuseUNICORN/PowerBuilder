@@ -4,12 +4,12 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using PowerBuilderUI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using PowerBuilderUI.Forms;
+using PowerBuilderUI;
 
 #endregion
 
@@ -48,7 +48,7 @@ namespace PowerBuilder.Commands
             frmSelectiveTransfer SelectiveTransferForm = new frmSelectiveTransfer();
             //need to fix the types on for this interaction.
             SelectiveTransferForm.AddItemsToCBox(openTargets.ToList<Document>());
-            PBDialogResult res =  SelectiveTransferForm.ShowDialogWithResult();
+            PowerDialogResult res =  SelectiveTransferForm.ShowDialogWithResult();
 
             //TODO: add handling for emtpy selection
             if (res.IsAccepted) {

@@ -17,7 +17,7 @@ namespace PowerBuilder {
         ///<summary>
         /// User interaction should always be separated from command function.  Place the call for the Form here, or trigger Revit Selection UI
         ///</summary>
-        PBDialogResult GetInput(UIApplication uiapp);
+        PowerDialogResult GetInput(UIApplication uiapp);
     }
 }
 

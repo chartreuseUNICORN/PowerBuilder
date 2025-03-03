@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
+using PowerBuilderUI;
 
 namespace PowerBuilder.Commands {
     [Transaction(TransactionMode.Manual)]
@@ -22,7 +23,7 @@ namespace PowerBuilder.Commands {
             Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
             Document doc = uidoc.Document;
 
-            PBDialogResult res = GetInput(uiapp);
+            PowerDialogResult res = GetInput(uiapp);
             ElementId target = res.SelectionResults[0] as ElementId;
             frmDependencyMapper form = new frmDependencyMapper();
             Dictionary<ElementId, List<ElementId>> map = BuildDependencyMap(doc, target);
@@ -33,7 +34,7 @@ namespace PowerBuilder.Commands {
             
             return Result.Succeeded;
         }
-        public PBDialogResult GetInput(UIApplication uiapp) {
+        public PowerDialogResult GetInput(UIApplication uiapp) {
             // so how does this actually want to work. This is usually type based, except for classes that don't have types
             // line styles
             // text styles
@@ -41,7 +42,7 @@ namespace PowerBuilder.Commands {
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Document doc = uidoc.Document;
 
-            PBDialogResult res = new PBDialogResult();
+            PowerDialogResult res = new PowerDialogResult();
 
             try {
                 ElementId sel = uidoc.Selection.PickObject(ObjectType.Element, "Select Element to evaluate.").ElementId;

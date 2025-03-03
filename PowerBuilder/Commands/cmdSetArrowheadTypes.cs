@@ -85,7 +85,7 @@ namespace PowerBuilder.Commands
             frmSetArrowheadTypes commandUI = new frmSetArrowheadTypes();
             commandUI.AddArrowTypes(ArrowNames);
             commandUI.AddTargets(TagTypeNames);
-            PBDialogResult res = commandUI.ShowDialogWithResult();
+            PowerDialogResult res = commandUI.ShowDialogWithResult();
 
             if (res.IsAccepted)
             {

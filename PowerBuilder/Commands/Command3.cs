@@ -4,6 +4,7 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+using PowerBuilderUI;
 using PowerBuilderUI.Forms;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace PowerBuilder.Commands
             Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
             Document doc = uidoc.Document;
 
-            PBDialogResult res = new PBDialogResult();
+            PowerDialogResult res = new PowerDialogResult();
 
             Categories cats = doc.Settings.Categories;
 
