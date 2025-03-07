@@ -7,13 +7,16 @@ using System.Threading.Tasks;
 
 namespace PowerBuilder.SelectionHelpers {
     public class CategorySelectionFilter : ISelectionFilter {
-        private BuiltInCategory _cat;
+        private List<BuiltInCategory> _cats;
         public CategorySelectionFilter(BuiltInCategory cat) {
-            _cat = cat;
+            _cats.Add(cat);
+        }
+        public CategorySelectionFilter(List<BuiltInCategory> cats) {
+            _cats.AddRange(cats);
         }
         public bool AllowElement(Element elem) {
             if (elem.Category != null) {
-                return elem.Category.BuiltInCategory == _cat;
+                return _cats.Contains<BuiltInCategory>(elem.Category.BuiltInCategory);
             }
             else {
                 return false;
