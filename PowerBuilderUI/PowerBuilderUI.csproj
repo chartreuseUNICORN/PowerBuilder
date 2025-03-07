@@ -75,6 +75,10 @@
     <Description>Specialized tools for BIM Consultants</Description>
     <PublishSingleFile>true</PublishSingleFile>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Forms\**" />
+    <EmbeddedResource Remove="Forms\**" />
+  </ItemGroup>
 
   <!--REFERENCES-->
   <ItemGroup>
