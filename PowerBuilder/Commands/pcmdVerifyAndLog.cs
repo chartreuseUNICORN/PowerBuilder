@@ -97,7 +97,8 @@ namespace PowerBuilder.Commands
             Result res = Result.Succeeded;
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Document doc = uidoc.Document;
-            
+
+            string logfile = $"{doc.Title}_ValidationLog.txt";
             
             foreach (ElementId eid in sel) {
                 Element e = doc.GetElement(eid);
@@ -108,7 +109,7 @@ namespace PowerBuilder.Commands
                     e.LookupParameter("isVerified").Set(0);
                     e.Pinned = true;
 
-                    FileUtils.WriteToFile(ProduceElementLog(e));
+                    FileUtils.WriteToFile(ProduceElementLog(e),logfile);
 
                 }
                 catch {
