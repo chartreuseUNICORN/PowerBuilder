@@ -5,6 +5,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using PowerBuilder.SelectionHelpers;
+using PowerBuilder.Utils;
 using PowerBuilderUI;
 using PowerBuilderUI.Forms;
 using Serilog;
@@ -12,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 
@@ -94,24 +96,16 @@ namespace PowerBuilder.Commands
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Document doc = uidoc.Document;
             
-            string msg;
-            /*  Contents of the log report
-                ElementId
-                Date
-                Location (Room)
-                user id
-                comments
-             */
+            
             foreach (ElementId eid in sel) {
                 Element e = doc.GetElement(eid);
-                msg = "";
                 
                 DateTime timestamp = DateTime.Now;
                 try {
                     e.LookupParameter("isVerified").Set(0);
                     e.Pinned = true;
-                    
-                    e.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS).Set(msg);
+
+                    FileUtils.WriteToFile(ProduceElementLog(e));
 
                 }
                 catch {
@@ -124,21 +118,28 @@ namespace PowerBuilder.Commands
         /// <summary>
         /// Produce element verification log
         /// </summary>
-        /// <param name="e"></param>
+        /// <param name="e">Element to log</param>
         /// <returns></returns>
-        private Dictionary<string, string> ProduceElementLog(Element e) {
-            Dictionary<string, string> log = new Dictionary<string, string>();
+        private string ProduceElementLog(Element e) {
             DateTime timestamp = DateTime.Now;
             Document doc = e.Document;
+            List<string> MessageCollector = new List<string>();
+            /*  Contents of the log report
+                ElementId
+                Date
+                Location (Room)
+                user id
+                comments
+             */
 
-            log["ElementId"] = e.Id.Value.ToString();
-            log["Date"] = timestamp.ToString();
-            log["Location"] = "TODO: IMPLEMENT LOCATION";
-            log["User"] = doc.Application.Username;
-            log["Comments"] = e.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS).AsString();
+            MessageCollector.Add(e.Id.Value.ToString());
+            MessageCollector.Add( timestamp.ToString());
+            MessageCollector.Add("TODO: IMPLEMENT LOCATION CHECK");
+            MessageCollector.Add(doc.Application.Username);
+            MessageCollector.Add( e.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS).AsString());
             //TODO: implement class based tracking
             //TODO: Where does the log go?
-            return log;
+            return String.Join("\t",MessageCollector.ToArray());
         }
     }
 }
