@@ -104,6 +104,7 @@ namespace PowerBuilder.Commands
                 
                 DateTime timestamp = DateTime.Now;
                 try {
+                    //TODO: determine some behavior for the case where this parameter does not exist.
                     e.LookupParameter("isVerified").Set(0);
                     e.Pinned = true;
 
