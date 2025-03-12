@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 
 namespace PowerBuilder.Utils {
     internal class FileUtils {
-        
-        public static void WriteToFile(string message) {
-            string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+        private static string _default = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+
+        public static void WriteToFile(string message, string filename , string path = "") {
             
-            using (StreamWriter outFile = new StreamWriter(Path.Combine(docPath, "ValidationLog.txt"))) {
+            if (path == "") path = _default;
+            
+            using (StreamWriter outFile = new StreamWriter(Path.Combine(path, filename))) {
                 outFile.WriteLine(message);
             }
         }
