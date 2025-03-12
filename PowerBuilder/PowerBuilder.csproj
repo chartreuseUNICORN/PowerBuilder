@@ -127,9 +127,7 @@
     <Message Text="Copy files to Addin folder" Importance="high" />
     <Copy SourceFiles="@(AddinFiles)" DestinationFolder="$(AppData)\Autodesk\Revit\Addins\$(RevitVersion)\%(RecursiveDir)" Condition="$(Configuration.Contains('Debug'))" />
   </Target>
-  <ItemGroup>
-    <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="2025.3.0" />
-  </ItemGroup>
+  
   <ItemGroup>
     <Reference Update="mscorlib">
       <SpecificVersion>False</SpecificVersion>
@@ -138,9 +136,7 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\PowerBuilderUI\PowerBuilderUI.csproj" />
-  </ItemGroup>
+  
 
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -27,18 +27,18 @@ namespace PowerBuilder.Commands {
             Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
             Document doc = uidoc.Document;
 
-            PBDialogResult res = GetInput(uiapp);
+            PowerDialogResult res = GetInput(uiapp);
             if (res.IsAccepted) {
                 TextUnion(doc, res.SelectionResults[0] as ICollection<ElementId>);
             }
 
             return Result.Succeeded;
         }
-        public PBDialogResult GetInput(UIApplication uiapp) {
+        public PowerDialogResult GetInput(UIApplication uiapp) {
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Document doc = uidoc.Document;
             
-            PBDialogResult res = new PBDialogResult();
+            PowerDialogResult res = new PowerDialogResult();
             CategorySelectionFilter textNoteFilter = new CategorySelectionFilter(BuiltInCategory.OST_TextNotes);
             
             try {
