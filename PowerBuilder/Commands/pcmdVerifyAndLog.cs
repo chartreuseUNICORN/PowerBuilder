@@ -39,13 +39,15 @@ namespace PowerBuilder.Commands
             Result ComRes;
 
             PowerDialogResult res = GetInput(uiapp);
-            
-            using (Transaction T = new Transaction(doc)) {
-                if (T.Start("verify-and-log")== TransactionStatus.Started) {
-                    ComRes = VerifyAndLog(res.SelectionResults[0] as List<ElementId>, uiapp);
-                }
-                else {
-                    T.RollBack();
+
+            if (res.IsAccepted) {
+                using (Transaction T = new Transaction(doc)) {
+                    if (T.Start("verify-and-log") == TransactionStatus.Started) {
+                        ComRes = VerifyAndLog(res.SelectionResults[0] as List<ElementId>, uiapp);
+                    }
+                    else {
+                        T.RollBack();
+                    }
                 }
             }
             
@@ -68,7 +70,7 @@ namespace PowerBuilder.Commands
                 .Where(x => (x.BuiltInCategory != BuiltInCategory.INVALID) && (x.CategoryType == CategoryType.Model))
                 .Select(x => x.BuiltInCategory).ToList();
 
-            CategorySelectionFilter textNoteFilter = new CategorySelectionFilter(ModelCategories);
+            CategorySelectionFilter textNoteFilter = new CategorySelectionFilter( ModelCategories );
 
             try {
                 IList<Reference> refs = uidoc.Selection.PickObjects(ObjectType.Element, textNoteFilter, "Select Elements to Verify.");
