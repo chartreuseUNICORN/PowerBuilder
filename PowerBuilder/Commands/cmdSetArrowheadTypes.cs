@@ -17,9 +17,11 @@ using System.Windows.Forms;
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class cmdSetArrowheadTypes : IExternalCommand
+    public class cmdSetArrowheadTypes : IPowerCommand
     {
-        public static string DisplayName { get; } = "Set Arrowhead by Type";
+        public string DisplayName { get; } = "Set Arrowhead by Type";
+        public string ShortDesc { get; } = "Select a family and specify the Arrowhead Type to associate with that family";
+        public bool RibbonIncludeFlag { get; } = true;
         public Result Execute(
           ExternalCommandData commandData,
           ref string message,
@@ -122,6 +124,9 @@ namespace PowerBuilder.Commands
             }
 
             return Result.Succeeded;
+        }
+        public PowerDialogResult GetInput(UIApplication uiapp) {
+            throw new NotImplementedException("method not implemented");
         }
         private void pcdrSetArrowheadByRefTargets(Element source, List<Element> targets, Document doc) {
             using (Transaction tx = new Transaction(doc))

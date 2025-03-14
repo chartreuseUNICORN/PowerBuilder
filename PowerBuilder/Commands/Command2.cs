@@ -13,9 +13,11 @@ using System.Diagnostics;
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class Command2 : IExternalCommand
+    public class Command2 : IPowerCommand
     {
-        public static string DisplayName { get; } = "Sample Command 2";
+        public string DisplayName { get; } = "Hello World!";
+        public string ShortDesc { get; } = "A standard Hello, World command in Revit";
+        public bool RibbonIncludeFlag { get; } = true;
         public Result Execute(
           ExternalCommandData commandData,
           ref string message,
@@ -30,6 +32,9 @@ namespace PowerBuilder.Commands
             TaskDialog.Show("Command1", "Hello World");
 
             return Result.Succeeded;
+        }
+        public PowerDialogResult GetInput(UIApplication uiapp) {
+            throw new NotImplementedException("No input collection required");
         }
     }
 }

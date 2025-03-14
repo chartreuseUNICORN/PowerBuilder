@@ -7,7 +7,7 @@ using Autodesk.Revit.UI;
 
 namespace PowerBuilder {
     /// <summary>
-    /// Base abstract class for PowerBuilder commands
+    /// Interface for implementing PowerBuilder commands
     /// </summary>
     public interface IPowerCommand : IExternalCommand {
         abstract string DisplayName { get; }

@@ -16,17 +16,29 @@ using PowerBuilderUI;
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class cmdSelectiveTransfer : IExternalCommand
+    public class cmdSelectiveTransfer : IPowerCommand
     {
-        public static string DisplayName { get; } = "Selective Transfer";
-        public static string ShortDescr { get; } = "Select Element Types to copy from the source document to the target document";
-        public static bool LoadCommandFlag = true;
+        public string DisplayName { get; } = "Selective Transfer";
+        public string ShortDesc { get; } = "Select Element Types to copy from the source document to the target document";
+        public bool RibbonIncludeFlag { get; } = true;
         public Result Execute(
           ExternalCommandData commandData,
           ref string message,
           ElementSet elements)
         {
             UIApplication uiapp = commandData.Application;
+            PowerDialogResult res = GetInput(uiapp);
+            //TODO: add handling for emtpy selection
+            if (res.IsAccepted) {
+                Debug.WriteLine("form submitted");
+                Document docSource = (Document)res.SelectionResults[0];
+                List<ElementId> selectedIds = res.SelectionResults[1] as List<ElementId>;
+                SelectiveTransfer(selectedIds, docSource, res.SelectionResults[2] as Document);
+            }
+
+            return Result.Succeeded;
+        }
+        public PowerDialogResult GetInput(UIApplication uiapp) {
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
             // In the other one, i called the active doc_tar and the others doc_src
@@ -38,8 +50,7 @@ namespace PowerBuilder.Commands
 
             HashSet<Document> openTargets = new HashSet<Document>();
             //Probably a tidier way to do this.
-            foreach (Document openDoc in app.Documents)
-            {
+            foreach (Document openDoc in app.Documents) {
                 if (!openDoc.Equals(docTarget)) {
                     openTargets.Add(openDoc);
                 }
@@ -48,17 +59,10 @@ namespace PowerBuilder.Commands
             frmSelectiveTransfer SelectiveTransferForm = new frmSelectiveTransfer();
             //need to fix the types on for this interaction.
             SelectiveTransferForm.AddItemsToCBox(openTargets.ToList<Document>());
-            PowerDialogResult res =  SelectiveTransferForm.ShowDialogWithResult();
+            PowerDialogResult res = SelectiveTransferForm.ShowDialogWithResult();
+            res.SelectionResults.Add(docTarget);
 
-            //TODO: add handling for emtpy selection
-            if (res.IsAccepted) {
-                Debug.WriteLine("form submitted");
-                Document docSource = (Document)res.SelectionResults[0];
-                List<ElementId> selectedIds = res.SelectionResults[1] as List<ElementId>;
-                SelectiveTransfer(selectedIds, docSource, docTarget);
-            }
-
-            return Result.Succeeded;
+            return res;
         }
         public bool SelectiveTransfer(ICollection<ElementId> lSelectedTypes, Document src, Document tar) {
 
