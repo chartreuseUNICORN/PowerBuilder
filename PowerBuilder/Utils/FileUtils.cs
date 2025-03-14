@@ -14,7 +14,7 @@ namespace PowerBuilder.Utils {
             
             if (path == "") path = _default;
             
-            using (StreamWriter outFile = new StreamWriter(Path.Combine(path, filename))) {
+            using (StreamWriter outFile = new StreamWriter(Path.Combine(path, filename),true)) {
                 outFile.WriteLine(message);
             }
         }

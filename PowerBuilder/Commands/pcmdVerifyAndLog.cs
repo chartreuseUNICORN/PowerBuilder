@@ -2,6 +2,7 @@
 using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
+using Autodesk.Revit.DB.Architecture;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using PowerBuilder.SelectionHelpers;
@@ -22,16 +23,14 @@ using System.Windows.Forms;
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdVerifyAndLog : IPowerCommand
-    {
+    public class pcmdVerifyAndLog : IPowerCommand {
         string IPowerCommand.DisplayName { get; } = "Verify and Log as-built element status";
         string IPowerCommand.ShortDesc { get; } = "Mark verification parameter, Pin, and produce work log for selected elements";
         bool IPowerCommand.RibbonIncludeFlag { get; } = true;
         public Result Execute(
           ExternalCommandData commandData,
           ref string message,
-          ElementSet elements)
-        {
+          ElementSet elements) {
             UIApplication uiapp = commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
@@ -44,13 +43,14 @@ namespace PowerBuilder.Commands
                 using (Transaction T = new Transaction(doc)) {
                     if (T.Start("verify-and-log") == TransactionStatus.Started) {
                         ComRes = VerifyAndLog(res.SelectionResults[0] as List<ElementId>, uiapp);
+                        T.Commit();
                     }
                     else {
                         T.RollBack();
                     }
                 }
             }
-            
+
             return Result.Succeeded;
         }
         /// <summary>
@@ -59,16 +59,36 @@ namespace PowerBuilder.Commands
         /// <param name="uiapp"></param>
         /// <returns></returns>
         public PowerDialogResult GetInput(UIApplication uiapp) {
-            
+
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Document doc = uidoc.Document;
 
             PowerDialogResult res = new PowerDialogResult();
-            List<BuiltInCategory> ModelCategories = new FilteredElementCollector(doc)
-                .OfClass(typeof(Category))
-                .Cast<Category>()
-                .Where(x => (x.BuiltInCategory != BuiltInCategory.INVALID) && (x.CategoryType == CategoryType.Model))
-                .Select(x => x.BuiltInCategory).ToList();
+            //TODO change this to find categories bound to parameter key "isValid"
+            //the idea that a tracking parameter like this should be implemented from the project level makes sense.
+            BindingMap ProjectParameters = doc.ParameterBindings;
+            List<BuiltInCategory> ModelCategories = new List<BuiltInCategory>();
+            
+            
+            DefinitionBindingMapIterator dbmIter = ProjectParameters.ForwardIterator();
+            dbmIter.Reset();
+
+            while (dbmIter.MoveNext()) {
+                
+                Definition keyParameter = dbmIter.Key;
+                if (keyParameter.Name == "isVerified") {
+                    
+                    InstanceBinding BindingValue = ProjectParameters.get_Item(keyParameter) as InstanceBinding;
+                    foreach (Category cat in BindingValue.Categories) {
+                        ModelCategories.Add(cat.BuiltInCategory);
+                    }
+                    break;
+                }
+            }
+            
+            if (ModelCategories.Count == 0) {
+                throw new ArgumentException("Project Parameter: isVerified not found");
+            }
 
             CategorySelectionFilter textNoteFilter = new CategorySelectionFilter( ModelCategories );
 
@@ -106,7 +126,7 @@ namespace PowerBuilder.Commands
                 DateTime timestamp = DateTime.Now;
                 try {
                     //TODO: determine some behavior for the case where this parameter does not exist.
-                    e.LookupParameter("isVerified").Set(0);
+                    e.LookupParameter("isVerified").Set(1);
                     e.Pinned = true;
 
                     FileUtils.WriteToFile(ProduceElementLog(e),logfile);
@@ -127,6 +147,7 @@ namespace PowerBuilder.Commands
         private string ProduceElementLog(Element e) {
             DateTime timestamp = DateTime.Now;
             Document doc = e.Document;
+            Room RoomLoc = null;
             List<string> MessageCollector = new List<string>();
             /*  Contents of the log report
                 ElementId
@@ -138,7 +159,21 @@ namespace PowerBuilder.Commands
 
             MessageCollector.Add(e.Id.Value.ToString());
             MessageCollector.Add( timestamp.ToString());
-            MessageCollector.Add("TODO: IMPLEMENT LOCATION CHECK");
+            if (e.Location is LocationPoint) {
+                LocationPoint locP = e.Location as LocationPoint;
+                RoomLoc = doc.GetRoomAtPoint(locP.Point);
+            }
+            else if (e.Location is LocationCurve) {
+                LocationCurve locC = e.Location as LocationCurve;
+                Transform MidPoint = locC.Curve.ComputeDerivatives(0.5, true);
+                RoomLoc = doc.GetRoomAtPoint(MidPoint.Origin);
+            }
+            if (RoomLoc != null) {
+                MessageCollector.Add($"{RoomLoc.Number} {RoomLoc.Name}");
+            }
+            else {
+                MessageCollector.Add("OTHER LOCATION");
+            }
             MessageCollector.Add(doc.Application.Username);
             MessageCollector.Add( e.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS).AsString());
             //TODO: implement class based tracking

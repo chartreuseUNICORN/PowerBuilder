@@ -10,10 +10,10 @@ namespace PowerBuilder.SelectionHelpers {
     public class CategorySelectionFilter : ISelectionFilter {
         private List<BuiltInCategory> _cats;
         public CategorySelectionFilter(BuiltInCategory cat) {
-            _cats.Add(cat);
+            _cats = new List<BuiltInCategory>(){ cat };
         }
         public CategorySelectionFilter(List<BuiltInCategory> cats) {
-            _cats.AddRange(cats);
+            _cats = new List<BuiltInCategory>(cats);
         }
         public bool AllowElement(Element elem) {
             if (elem.Category != null) {
