@@ -7,9 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static UIFramework.Widget.CustomControls.NativeMethods;
+using Autodesk.Revit.Attributes;
 
 namespace PowerBuilder.Commands {
-    internal class pcmdToggleSectionBox : IPowerCommand {
+    [Transaction(TransactionMode.Manual)]
+    public class pcmdToggleSectionBox : IPowerCommand {
         public string DisplayName { get; } = "Toggle Section Box";
         public string ShortDesc { get; } = "Toggle the Section Box visibility in the active view";
         public bool RibbonIncludeFlag { get; } = true;

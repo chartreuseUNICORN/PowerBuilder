@@ -69,7 +69,7 @@ namespace PowerBuilder.Commands
             BindingMap ProjectParameters = doc.ParameterBindings;
             List<BuiltInCategory> ModelCategories = new List<BuiltInCategory>();
             
-            
+            //TODO: possibly valuable to implement/expect this as a shared parameter
             DefinitionBindingMapIterator dbmIter = ProjectParameters.ForwardIterator();
             dbmIter.Reset();
 
