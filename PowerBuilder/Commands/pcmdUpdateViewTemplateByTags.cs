@@ -9,8 +9,10 @@ using System.Diagnostics;
 using Autodesk.Revit.Attributes;
 using Nice3point.Revit.Extensions;
 using PowerBuilder.Extensions;
+using PowerBuilder.Interfaces;
 
-namespace PowerBuilder.Commands {
+namespace PowerBuilder.Commands
+{
     [Transaction(TransactionMode.Manual)]
     public class pcmdUpdateViewTemplatesByVTsequence : IPowerCommand {
         public string DisplayName { get; } = "Update View Templates by Layer";
@@ -19,6 +21,7 @@ namespace PowerBuilder.Commands {
             "\nUnmodifiable options:\n" +
             "\tShadows\n\tLighting\n\tPhotographic Exposure\n\n" +
             "Control these independently in the View Template's settings. They are unchanged by this procedure.";
+        public bool RibbonIncludeFlag { get; } = true;
         //TODO: manage control parameter and RibbonIncludeFlag as part of startup
         /* There are special cases that need to be considered
              *      Overrides: manipulate these using the Get and Set methods
@@ -55,7 +58,6 @@ namespace PowerBuilder.Commands {
                 BuiltInParameter.VIS_GRAPHICS_DESIGNOPTIONS,
                 BuiltInParameter.VIS_GRAPHICS_FILTERS,
             };
-        public bool RibbonIncludeFlag { get; } = true;
         private static Definition _controlParam;
         public Result Execute(
           ExternalCommandData commandData,

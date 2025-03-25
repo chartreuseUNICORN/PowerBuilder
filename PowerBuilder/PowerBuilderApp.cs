@@ -3,6 +3,7 @@ using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using PowerBuilder.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -42,13 +43,22 @@ namespace PowerBuilder
 
             Assembly asm = Assembly.GetExecutingAssembly();
             var commandTypes = asm.GetTypes().Where(t => typeof(IPowerCommand).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
-            return commandTypes.Select(t => {
+            /*return commandTypes.Select(t => {
                 var DisplayNameProperty = t.GetProperty("IPowerCommand.DisplayName", BindingFlags.Public );
-                var TooltipProperty = t.GetProperty("IPowerCommand.ShortDesc", BindingFlags.Public);
+                var TooltipProperty = t.GetProperty("PowerBuilder.IPowerCommand.ShortDesc");
                 string displayName = DisplayNameProperty?.GetValue(null) as string ?? t.Name;
                 string tooltip = TooltipProperty?.GetValue(null) as string ?? "";
                 return (t.FullName, displayName, tooltip);
-            }).ToList();
+            }).ToList();*/
+            List<(string fullName, string displayName, string tooltip)> CommandData = new List<(string fullName, string displayName, string tooltip)>();
+            foreach (System.Type Command in commandTypes) {
+                object instance = Activator.CreateInstance(Command);
+                CommandData.Add((Command.Name, 
+                    Command.GetProperty("DisplayName")?.GetValue(instance) as string ?? Command.Name, 
+                    Command.GetProperty("ShortDesc")?.GetValue(instance) as string ?? "")
+                    );
+            }
+            return CommandData;
         }
         public Result OnShutdown(UIControlledApplication a)
         {

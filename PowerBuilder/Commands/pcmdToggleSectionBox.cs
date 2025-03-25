@@ -8,8 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using static UIFramework.Widget.CustomControls.NativeMethods;
 using Autodesk.Revit.Attributes;
+using PowerBuilder.Interfaces;
 
-namespace PowerBuilder.Commands {
+namespace PowerBuilder.Commands
+{
     [Transaction(TransactionMode.Manual)]
     public class pcmdToggleSectionBox : IPowerCommand {
         public string DisplayName { get; } = "Toggle Section Box";

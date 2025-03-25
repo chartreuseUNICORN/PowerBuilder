@@ -5,11 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.UI;
 
-namespace PowerBuilder {
+namespace PowerBuilder.Interfaces
+{
     /// <summary>
     /// Interface for implementing PowerBuilder commands
     /// </summary>
-    public interface IPowerCommand : IExternalCommand {
+    public interface IPowerCommand : IExternalCommand
+    {
         abstract string DisplayName { get; }
         abstract string ShortDesc { get; }
         abstract bool RibbonIncludeFlag { get; }

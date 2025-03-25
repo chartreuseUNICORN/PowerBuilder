@@ -10,13 +10,15 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
 using PowerBuilderUI;
+using PowerBuilder.Interfaces;
 
-namespace PowerBuilder.Commands {
+namespace PowerBuilder.Commands
+{
     [Transaction(TransactionMode.Manual)]
     public class pcmdDependencyMapper : IPowerCommand {
-        string IPowerCommand.DisplayName { get; } = "Dependency Mapper";
-        string IPowerCommand.ShortDesc { get; } = "Graphically Display the element dependency of a selected Element or Type";
-        bool IPowerCommand.RibbonIncludeFlag { get; } = true;
+        public string DisplayName { get; } = "Dependency Mapper";
+        public string ShortDesc { get; } = "Graphically Display the element dependency of a selected Element or Type";
+        public bool RibbonIncludeFlag { get; } = true;
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements) {
             UIApplication uiapp = commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;

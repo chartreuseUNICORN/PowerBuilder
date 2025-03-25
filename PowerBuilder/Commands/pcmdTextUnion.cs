@@ -10,15 +10,17 @@ using System.Threading.Tasks;
 using PowerBuilder.SelectionHelpers;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
+using PowerBuilder.Interfaces;
 
-namespace PowerBuilder.Commands {
+namespace PowerBuilder.Commands
+{
 
 
     [Transaction(TransactionMode.Manual)]
     public class pcmdTextUnion : IPowerCommand {
-        string IPowerCommand.DisplayName { get; } = "Text Union";
-        string IPowerCommand.ShortDesc { get; } =  "Concatenate TextNote contents into one TextNote";
-        bool IPowerCommand.RibbonIncludeFlag { get; } = true;
+        public string DisplayName { get; } = "Text Union";
+        public string ShortDesc { get; } =  "Concatenate TextNote contents into one TextNote";
+        public bool RibbonIncludeFlag { get; } = true;
 
         
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements) {

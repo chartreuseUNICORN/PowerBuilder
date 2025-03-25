@@ -5,6 +5,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+using PowerBuilder.Interfaces;
 using PowerBuilder.SelectionHelpers;
 using PowerBuilder.Utils;
 using PowerBuilderUI;
@@ -24,9 +25,9 @@ namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
     public class pcmdVerifyAndLog : IPowerCommand {
-        string IPowerCommand.DisplayName { get; } = "Verify and Log as-built element status";
-        string IPowerCommand.ShortDesc { get; } = "Mark verification parameter, Pin, and produce work log for selected elements";
-        bool IPowerCommand.RibbonIncludeFlag { get; } = true;
+        public string DisplayName { get; } = "Verify and Log";
+        public string ShortDesc { get; } = "Mark verification parameter, Pin, and produce work log for selected elements";
+        public bool RibbonIncludeFlag { get; } = true;
         public Result Execute(
           ExternalCommandData commandData,
           ref string message,
