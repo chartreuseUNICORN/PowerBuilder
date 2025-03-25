@@ -11,9 +11,9 @@ using Autodesk.Revit.Attributes;
 
 namespace PowerBuilder.Commands {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdToggleSectionBox : IPowerCommand {
-        public string DisplayName { get; } = "Toggle Section Box";
-        public string ShortDesc { get; } = "Toggle the Section Box visibility in the active view";
+    public class pcmdToggleViewProjection : IPowerCommand {
+        public string DisplayName { get; } = "Toggle View Projection";
+        public string ShortDesc { get; } = "Toggle the View Projection state in the active view";
         public bool RibbonIncludeFlag { get; } = true;
         public Result Execute(
           ExternalCommandData commandData,
@@ -25,31 +25,26 @@ namespace PowerBuilder.Commands {
             Document doc = uidoc.Document;
 
             Autodesk.Revit.DB.View ActiveView = doc.ActiveView;
-            ElementId SectionBoxCategoryId = new ElementId((Int64)(-2000301));
-            bool setState;
-            //check if you can
-            //change the visibility
-            if (ActiveView.IsCategoryOverridable(SectionBoxCategoryId)) {
+            
+            if (ActiveView is View3D) {
+                if (ActiveView.Cast<View3D>().CanToggleBetweenPerspectiveAndIsometric())
                 using (Transaction T = new Transaction(doc)) {
-                    if (T.Start("toggle-section-box") == TransactionStatus.Started) {
+                    if (T.Start("toggle-view-projection") == TransactionStatus.Started) {
+
+                        ActiveView.get_Parameter(BuiltInParameter.VIEWER_PERSPECTIVE).Set(!ActiveView.Cast<View3D>().IsPerspective);
                         
-                        //TODO: how does this interact with different visibility modes
-                        if (ActiveView.GetCategoryHidden(SectionBoxCategoryId)) {
-                            setState = false;
-                        }
-                        else {
-                            setState = true;
-                        }
-                        ActiveView.SetCategoryHidden(SectionBoxCategoryId, setState);
                         T.Commit();
                     }
                     else {
                         T.RollBack();
                     }
                 }
+                return Result.Succeeded;
+            }
+            else {
+                return Result.Failed;
             }
             
-            return Result.Succeeded;
         }
         public PowerDialogResult GetInput (UIApplication uiapp) {
             throw new NotImplementedException("Method not used");
