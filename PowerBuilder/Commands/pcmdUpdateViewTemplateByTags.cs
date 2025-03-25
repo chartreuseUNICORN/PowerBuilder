@@ -167,7 +167,14 @@ namespace PowerBuilder.Commands {
         /// <param name="source"></param>
         /// <param name="layer"></param>
         private void GraphicOverridesMergeCategory(BuiltInParameter bip, Autodesk.Revit.DB.View source, Autodesk.Revit.DB.View layer) {
-            Debug.WriteLine($"[GraphicOverridesMergeCategory] {layer.Name}->{source.Name}");
+            /*TODO:
+             * 
+             * ISSUES:
+             *  .   categories affected by previous layers not tracked. the real issue is that categories want to be set bottom-up and 
+             *      filters want to be set top down..the tracking is needed if 'transparent' mode is ever implemented anyways.
+             *          . maybe you transpose the logic and build the override for each item category/filter across the templates
+             */
+            Debug.WriteLine($"[GraphicOverridesMergeCategory] {layer.Name}\t->\t{source.Name}");
             Dictionary<BuiltInParameter, CategoryType> BipToCategoryType = new Dictionary<BuiltInParameter, CategoryType> {
                 { BuiltInParameter.VIS_GRAPHICS_MODEL , CategoryType.Model},
                 { BuiltInParameter.VIS_GRAPHICS_ANNOTATION , CategoryType.Annotation },
@@ -204,8 +211,11 @@ namespace PowerBuilder.Commands {
              *    . Assume layer filters should always be at the bottom. retained source templates should be unchanged order within their set
              *    . i think this requires filters to be implemented from top down
              *    [x] blind reinforcement is $$ but simpler to implement from an expected order
+             *    
+             *ISSUES
+             *  . Filter Elements affected by previous layers not tracked
              */
-            Debug.WriteLine($"[GraphicOverridesMergeFilter] {layer.Name}->{source.Name}");
+            Debug.WriteLine($"[GraphicOverridesMergeFilter] {layer.Name}\t->\t{source.Name}");
             foreach (ElementId filterId in layer.GetOrderedFilters().Reverse()) {
                 OverrideGraphicSettings filterOGS = layer.GetFilterOverrides(filterId);
                 if (source.GetFilters().Contains(filterId)) source.RemoveFilter(filterId);

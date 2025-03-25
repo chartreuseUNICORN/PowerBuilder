@@ -16,7 +16,7 @@ using PowerBuilderUI;
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class cmdSelectiveTransfer : IPowerCommand
+    public class pcmdSelectiveTransfer : IPowerCommand
     {
         public string DisplayName { get; } = "Selective Transfer";
         public string ShortDesc { get; } = "Select Element Types to copy from the source document to the target document";
