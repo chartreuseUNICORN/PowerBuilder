@@ -26,25 +26,28 @@ namespace PowerBuilder
             //TODO: procedurally generate buttons from loaded command DLLs
             //last arg targets the command in the compiled DLL
             string thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
-            List<(string fullName, string displayName)> commArgs = GetCommandClasses("PowerBuilder");
+            List<(string fullName, string displayName, string shortDesc)> commArgs = GetCommandClasses("PowerBuilder");
             for (int i = 0; i < commArgs.Count; i++) {
                 Debug.WriteLine($"DisplayName: {commArgs[i].displayName}\t|FullName {commArgs[i].fullName}");
-                pullDownButton.AddPushButton(new PushButtonData($"PBCOM{i}", commArgs[i].displayName, thisAssemblyPath, commArgs[i].fullName));
+                PushButtonData CurrentPushButton = new PushButtonData($"PBCOM{i}", commArgs[i].displayName, thisAssemblyPath, commArgs[i].fullName);
+                CurrentPushButton.ToolTip = commArgs[i].shortDesc;
+                pullDownButton.AddPushButton(CurrentPushButton);
             }
 
             Debug.WriteLine($"+{thisAssemblyPath}");
             
             return Result.Succeeded;
         }
-        private List<(string fullName,string displayName)> GetCommandClasses(string sNameSpace) {
+        private List<(string fullName,string displayName, string tooltip)> GetCommandClasses(string sNameSpace) {
 
             Assembly asm = Assembly.GetExecutingAssembly();
-            var commandTypes = asm.GetTypes().Where(t => typeof(IExternalCommand).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+            var commandTypes = asm.GetTypes().Where(t => typeof(IPowerCommand).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
             return commandTypes.Select(t => {
-                var displayNameProperty = t.GetProperty("DisplayName", BindingFlags.Public | BindingFlags.Static);
-                string displayName = displayNameProperty?.GetValue(null) as string ?? t.Name;
-
-                return (t.FullName, displayName);
+                var DisplayNameProperty = t.GetProperty("IPowerCommand.DisplayName", BindingFlags.Public );
+                var TooltipProperty = t.GetProperty("IPowerCommand.ShortDesc", BindingFlags.Public);
+                string displayName = DisplayNameProperty?.GetValue(null) as string ?? t.Name;
+                string tooltip = TooltipProperty?.GetValue(null) as string ?? "";
+                return (t.FullName, displayName, tooltip);
             }).ToList();
         }
         public Result OnShutdown(UIControlledApplication a)
