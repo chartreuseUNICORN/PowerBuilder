@@ -7,10 +7,10 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using PowerBuilder.SelectionHelpers;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using PowerBuilder.Interfaces;
+using PowerBuilder.SelectionFilter;
 
 namespace PowerBuilder.Commands
 {

@@ -18,8 +18,7 @@ using System.Windows.Forms;
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdSetArrowheadTypes : IPowerCommand
-    {
+    public class pcmdSetArrowheadTypes : IPowerCommand {
         public string DisplayName { get; } = "Set Arrowhead by Type";
         public string ShortDesc { get; } = "Select a family and specify the Arrowhead Type to associate with that family";
         public bool RibbonIncludeFlag { get; } = true;

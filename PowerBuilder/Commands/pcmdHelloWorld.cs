@@ -14,8 +14,7 @@ using System.Diagnostics;
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdHelloWorld : IPowerCommand
-    {
+    public class pcmdHelloWorld : IPowerCommand {
         public string DisplayName { get; } = "Hello World!";
         public string ShortDesc { get; } = "A standard Hello, World command in Revit";
         public bool RibbonIncludeFlag { get; } = true;

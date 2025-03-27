@@ -2,7 +2,6 @@
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using PowerBuilder.Forms;
-using PowerBuilder.SelectionHelpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +14,7 @@ using PowerBuilder.Interfaces;
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdDependencyMapper : IPowerCommand {
+    public class pcmdDependencyMapper : IPowerCommand{
         public string DisplayName { get; } = "Dependency Mapper";
         public string ShortDesc { get; } = "Graphically Display the element dependency of a selected Element or Type";
         public bool RibbonIncludeFlag { get; } = true;

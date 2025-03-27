@@ -24,12 +24,11 @@ namespace PowerBuilder
             PulldownButtonData pullDownData = new PulldownButtonData("pldbPBCommands", "Power Tools");
             PulldownButton pullDownButton = ribbonPanel.AddItem(pullDownData) as PulldownButton;
 
-            //TODO: procedurally generate buttons from loaded command DLLs
-            //last arg targets the command in the compiled DLL
             string thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
+            Debug.WriteLine($"PATH: {thisAssemblyPath}");
             List<(string fullName, string displayName, string shortDesc)> commArgs = GetCommandClasses("PowerBuilder");
             for (int i = 0; i < commArgs.Count; i++) {
-                Debug.WriteLine($"DisplayName: {commArgs[i].displayName}\t|FullName {commArgs[i].fullName}");
+                Debug.WriteLine($"DisplayName: {commArgs[i].displayName}\t\t\tFullName {commArgs[i].fullName}");
                 PushButtonData CurrentPushButton = new PushButtonData($"PBCOM{i}", commArgs[i].displayName, thisAssemblyPath, commArgs[i].fullName);
                 CurrentPushButton.ToolTip = commArgs[i].shortDesc;
                 pullDownButton.AddPushButton(CurrentPushButton);
@@ -42,21 +41,19 @@ namespace PowerBuilder
         private List<(string fullName,string displayName, string tooltip)> GetCommandClasses(string sNameSpace) {
 
             Assembly asm = Assembly.GetExecutingAssembly();
-            var commandTypes = asm.GetTypes().Where(t => typeof(IPowerCommand).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
-            /*return commandTypes.Select(t => {
-                var DisplayNameProperty = t.GetProperty("IPowerCommand.DisplayName", BindingFlags.Public );
-                var TooltipProperty = t.GetProperty("PowerBuilder.IPowerCommand.ShortDesc");
-                string displayName = DisplayNameProperty?.GetValue(null) as string ?? t.Name;
-                string tooltip = TooltipProperty?.GetValue(null) as string ?? "";
-                return (t.FullName, displayName, tooltip);
-            }).ToList();*/
+            var commandTypes = asm.GetTypes().Where(t => typeof(IExternalCommand).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
             List<(string fullName, string displayName, string tooltip)> CommandData = new List<(string fullName, string displayName, string tooltip)>();
+            
             foreach (System.Type Command in commandTypes) {
                 object instance = Activator.CreateInstance(Command);
-                CommandData.Add((Command.Name, 
-                    Command.GetProperty("DisplayName")?.GetValue(instance) as string ?? Command.Name, 
+                
+                if ((bool)Command.GetProperty("RibbonIncludeFlag").GetValue(instance)) {
+                    CommandData.Add((Command.FullName,
+                    Command.GetProperty("DisplayName")?.GetValue(instance) as string ?? Command.Name,
                     Command.GetProperty("ShortDesc")?.GetValue(instance) as string ?? "")
                     );
+                }
+                
             }
             return CommandData;
         }
