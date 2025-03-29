@@ -88,6 +88,7 @@
     <PackageReference Include="Nice3point.Revit.Api.RevitAPIMacros" Version="$(RevitVersion).*" />
     <PackageReference Include="Nice3point.Revit.Api.UIFramework" Version="$(RevitVersion).*" />
     <PackageReference Include="Nice3point.Revit.Api.UIFrameworkServices" Version="$(RevitVersion).*" />
+    <PackageReference Include="QuickGraph" Version="3.6.61119.7" />
 
     <!--MVVM-->
 

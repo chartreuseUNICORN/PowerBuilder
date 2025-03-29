@@ -62,8 +62,8 @@ namespace PowerBuilder.Commands {
         }
 
         public void MatchMEPCurveProperties (Element source, Element target, int mode) {
-            //Should this be by BuiltInParameter?
             
+            //Should this be by BuiltInParameter?
             string ParameterName;
             switch (mode) {
                 case 1:
