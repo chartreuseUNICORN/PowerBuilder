@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using PowerBuilder.Extensions;
 
 namespace PowerBuilder.SelectionFilter
 {
@@ -22,8 +23,8 @@ namespace PowerBuilder.SelectionFilter
         }
         public bool AllowElement(Element elem)
         {
-            
-            return _classes.Where(t => IsSameOrSubclass(t,elem.GetType())).Any();
+            //apparently, there is ElementClassFilter which does something similar.  is it worth using that internal function instead?
+            return _classes.Where(t => elem.IsSameOrSubclass(t)).Any();
             
         }
         public bool AllowReference(Reference reference, XYZ position)
@@ -31,8 +32,5 @@ namespace PowerBuilder.SelectionFilter
             return false;
         }
 
-        private bool IsSameOrSubclass (Type Base, Type Candidate) {
-            return Candidate.IsSubclassOf(Base) || Candidate == Base;
-        }
     }
 }
