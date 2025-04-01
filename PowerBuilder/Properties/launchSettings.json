@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "PowerBuilder": {
+      "commandName": "Project"
+    },
+    "Debug R24": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files\\Autodesk\\Revit 2024\\Revit.exe"
+    }
+  }
+}
