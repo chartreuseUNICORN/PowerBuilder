@@ -135,6 +135,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="EventHandlers\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>

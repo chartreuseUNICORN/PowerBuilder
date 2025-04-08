@@ -42,8 +42,8 @@ namespace PowerBuilder.Commands {
             XYZ StPt, EdPt;
             Selection PointChoice = uidoc.Selection;
 
-            StPt = PointChoice.PickPoint("Select Start Point");
-            EdPt = PointChoice.PickPoint("Select End Points");
+            StPt = PointChoice.PickObject(ObjectType.PointOnElement,"Select Start Point").GlobalPoint;
+            EdPt = PointChoice.PickObject(ObjectType.PointOnElement,"Select End Points").GlobalPoint;
 
             res.AddSelectionResult(StPt);
             res.AddSelectionResult(EdPt);
