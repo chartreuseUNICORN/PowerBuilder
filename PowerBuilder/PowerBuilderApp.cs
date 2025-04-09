@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using PowerBuilder.Extensions;
+using Autodesk.Revit.DB.Events;
 
 #endregion
 
@@ -45,12 +46,16 @@ namespace PowerBuilder
 
             //register updaters
             UpdaterRegistry.RegisterUpdater(VaLUpdater);
-
-
-
             #endregion
 
             #region Register Event Handlers
+            try {
+                a.ControlledApplication.DocumentOpened += new EventHandler<DocumentOpenedEventArgs>(VaLUpdater.updater_OnDocumentOpened);
+                a.ControlledApplication.DocumentClosing += new EventHandler<DocumentClosingEventArgs>(VaLUpdater.updater_OnDocumentClosing);
+            }
+            catch (Exception) {
+                return Result.Failed;
+            }
             #endregion
 
             return Result.Succeeded;
@@ -77,8 +82,15 @@ namespace PowerBuilder
         public Result OnShutdown(UIControlledApplication a)
         {
             VerifyAndLogUpdater VaLUpdater = new VerifyAndLogUpdater(a.ActiveAddInId);
-            
+            #region Unregister Event Handlers
+            a.ControlledApplication.DocumentOpened -= VaLUpdater.updater_OnDocumentOpened;
+            a.ControlledApplication.DocumentClosing-= VaLUpdater.updater_OnDocumentClosing;
+            #endregion
+
+            #region Unregister IUpdaters
             UpdaterRegistry.UnregisterUpdater(VaLUpdater.GetUpdaterId());
+            #endregion
+
 
             return Result.Succeeded;
         }
