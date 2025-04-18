@@ -43,15 +43,19 @@ namespace PowerBuilder
             #region Configure IUpdaters
             //initialize updaters
             VerifyAndLogUpdater VaLUpdater = new VerifyAndLogUpdater(a.ActiveAddInId);
+            SpaceUpdater SpaceDms = new SpaceUpdater(a.ActiveAddInId);
 
             //register updaters
             UpdaterRegistry.RegisterUpdater(VaLUpdater);
+            UpdaterRegistry.RegisterUpdater(SpaceDms);
             #endregion
 
             #region Register Event Handlers
             try {
                 a.ControlledApplication.DocumentOpened += new EventHandler<DocumentOpenedEventArgs>(VaLUpdater.updater_OnDocumentOpened);
                 a.ControlledApplication.DocumentClosing += new EventHandler<DocumentClosingEventArgs>(VaLUpdater.updater_OnDocumentClosing);
+                a.ControlledApplication.DocumentOpened += new EventHandler<DocumentOpenedEventArgs>(SpaceDms.updater_OnDocumentOpened);
+                a.ControlledApplication.DocumentClosing += new EventHandler<DocumentClosingEventArgs>(SpaceDms.updater_OnDocumentClosing);
             }
             catch (Exception) {
                 return Result.Failed;
@@ -75,20 +79,24 @@ namespace PowerBuilder
                     Command.GetProperty("ShortDesc")?.GetValue(instance) as string ?? "")
                     );
                 }
-                
             }
             return CommandData;
         }
         public Result OnShutdown(UIControlledApplication a)
         {
             VerifyAndLogUpdater VaLUpdater = new VerifyAndLogUpdater(a.ActiveAddInId);
+            SpaceUpdater SpaceDms = new SpaceUpdater(a.ActiveAddInId);
+
             #region Unregister Event Handlers
             a.ControlledApplication.DocumentOpened -= VaLUpdater.updater_OnDocumentOpened;
             a.ControlledApplication.DocumentClosing-= VaLUpdater.updater_OnDocumentClosing;
+            a.ControlledApplication.DocumentOpened -= SpaceDms.updater_OnDocumentOpened;
+            a.ControlledApplication.DocumentClosing -= SpaceDms.updater_OnDocumentClosing;
             #endregion
 
             #region Unregister IUpdaters
             UpdaterRegistry.UnregisterUpdater(VaLUpdater.GetUpdaterId());
+            UpdaterRegistry.UnregisterUpdater(SpaceDms.GetUpdaterId());
             #endregion
 
 
