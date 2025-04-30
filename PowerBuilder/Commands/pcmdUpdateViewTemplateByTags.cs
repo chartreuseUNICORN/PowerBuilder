@@ -21,7 +21,7 @@ namespace PowerBuilder.Commands
             "\nUnmodifiable options:\n" +
             "\tShadows\n\tLighting\n\tPhotographic Exposure\n\n" +
             "Control these independently in the View Template's settings. They are unchanged by this procedure.";
-        public bool RibbonIncludeFlag { get; } = true;
+        public bool RibbonIncludeFlag { get; } = false;
         //TODO: manage control parameter and RibbonIncludeFlag as part of startup
         /* There are special cases that need to be considered
              *      Overrides: manipulate these using the Get and Set methods

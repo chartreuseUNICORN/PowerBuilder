@@ -16,7 +16,7 @@ namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
     public class pcmdUpdateViewTemplatesByViewLayers : IPowerCommand {
-        public string DisplayName { get; } = "Update View Templates by Layer (alternate)";
+        public string DisplayName { get; } = "Update View Templates by Layer";
         public string ShortDesc { get; } = "Sets view accessible view properties according to Templates listed in the parameter \"TemplateLayers\" to each view template." +
             "Graphic Overrides from all Layered Templates are combined." +
             "\nUnmodifiable options:\n" +
