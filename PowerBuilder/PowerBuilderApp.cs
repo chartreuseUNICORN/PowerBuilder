@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using PowerBuilder.Extensions;
 using Autodesk.Revit.DB.Events;
+using PowerBuilder.Services;
 
 #endregion
 
@@ -39,7 +40,7 @@ namespace PowerBuilder
                 pullDownButton.AddPushButton(CurrentPushButton);
             }
             #endregion
-
+            
             #region Configure IUpdaters
             //initialize updaters
             VerifyAndLogUpdater VaLUpdater = new VerifyAndLogUpdater(a.ActiveAddInId);
