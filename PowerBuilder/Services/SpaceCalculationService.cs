@@ -69,7 +69,7 @@ namespace PowerBuilder.Services {
             }
         }
         public void RefreshPressureBalance (Autodesk.Revit.DB.Mechanical.Space Space) {
-            Parameter SpacePressureBalance = Space.LookupParameter("SpacePressureBalance");
+            Parameter SpacePressureBalance = Space.LookupParameter("AirflowBalance");
             if (SpacePressureBalance != null) {
                 SpacePressureBalance.Set(
                     Space.get_Parameter(BuiltInParameter.ROOM_ACTUAL_SUPPLY_AIRFLOW_PARAM).AsDouble()-
