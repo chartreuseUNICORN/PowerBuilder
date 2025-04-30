@@ -16,6 +16,7 @@ namespace PowerBuilder.Commands {
         public string ShortDesc { get; } = "Display vector components from Start Point to End Point";
         public bool RibbonIncludeFlag { get; } = true;
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements) {
+            
             UIApplication uiapp = commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
@@ -23,12 +24,13 @@ namespace PowerBuilder.Commands {
             string Message;
             XYZ StartPoint, EndPoint, Displacement;
 
+
             PowerDialogResult res = GetInput(uiapp);
             StartPoint = res.SelectionResults[0] as XYZ;
             EndPoint = res.SelectionResults[1] as XYZ;
             Displacement = EndPoint.Subtract(StartPoint);
 
-            Message = $"x: {Displacement.X}\ny: {Displacement.Y}\nz: {Displacement.Z}\n\nlength: {Displacement.GetLength()}";
+            Message = $"x: {Displacement.X.ToInches()} in.\ny: {Displacement.Y.ToInches()} in.\nz: {Displacement.Z.ToInches()} in.\n\nlength: {Displacement.GetLength().ToInches()} in.";
 
             TaskDialog.Show(DisplayName, Message);
 
@@ -36,6 +38,7 @@ namespace PowerBuilder.Commands {
         }
 
         public PowerDialogResult GetInput(UIApplication uiapp) {
+            
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Document doc = uidoc.Document;
             PowerDialogResult res = new PowerDialogResult();
