@@ -27,6 +27,10 @@ namespace PowerBuilder
             PulldownButtonData pullDownData = new PulldownButtonData("pldbPBCommands", "Power Tools");
             PulldownButton pullDownButton = ribbonPanel.AddItem(pullDownData) as PulldownButton;
 
+            #region Initialize Singletons
+            ViewSynchronizationService Vss = ViewSynchronizationService.Instance;
+            #endregion
+
             #region Assemble Ribbon Components
             //Collect Commands and compose into RibbonItems
             //TODO: port this over to its own class RibbonBuilder or something
@@ -87,12 +91,17 @@ namespace PowerBuilder
         {
             VerifyAndLogUpdater VaLUpdater = new VerifyAndLogUpdater(a.ActiveAddInId);
             SpaceUpdater SpaceDms = new SpaceUpdater(a.ActiveAddInId);
+            ViewSynchronizationService Vss = ViewSynchronizationService.Instance;
 
             #region Unregister Event Handlers
             a.ControlledApplication.DocumentOpened -= VaLUpdater.updater_OnDocumentOpened;
             a.ControlledApplication.DocumentClosing-= VaLUpdater.updater_OnDocumentClosing;
             a.ControlledApplication.DocumentOpened -= SpaceDms.updater_OnDocumentOpened;
             a.ControlledApplication.DocumentClosing -= SpaceDms.updater_OnDocumentClosing;
+
+            if (Vss.Status) {
+                a.GetUIApplication().ViewActivated -= Vss.onViewActivated;
+            }
             #endregion
 
             #region Unregister IUpdaters

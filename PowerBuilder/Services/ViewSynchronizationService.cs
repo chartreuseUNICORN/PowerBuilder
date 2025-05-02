@@ -2,6 +2,7 @@
 using Autodesk.Revit.UI.Events;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,11 +23,21 @@ namespace PowerBuilder.Services {
     This probably ends up too expensive/slow to really implement.
      */
 
-    internal sealed class ViewSynchronizationService {
+    public sealed class ViewSynchronizationService {
+        private static readonly ViewSynchronizationService _instance = new ViewSynchronizationService();
         private bool _status;
         
-        internal ViewSynchronizationService () {
+        static ViewSynchronizationService () {
+            
+        }
+        private ViewSynchronizationService() {
             _status = false;
+        }
+
+        public static ViewSynchronizationService Instance {
+            get {
+                return _instance;
+            }
         }
         public bool Status {
             get => _status;
@@ -61,5 +72,6 @@ namespace PowerBuilder.Services {
             _status = false;
             uiapp.ViewActivated -= new EventHandler<ViewActivatedEventArgs>(onViewActivated);
         }
+        
     }
 }
