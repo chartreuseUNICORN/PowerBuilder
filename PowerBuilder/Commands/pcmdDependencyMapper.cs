@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
 using PowerBuilderUI;
 using PowerBuilder.Interfaces;
+using Serilog;
 
 namespace PowerBuilder.Commands
 {
@@ -23,6 +24,8 @@ namespace PowerBuilder.Commands
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
             Document doc = uidoc.Document;
+
+            Log.Information("IExternalCommand: {Name}", DisplayName);
 
             PowerDialogResult res = GetInput(uiapp);
             ElementId target = res.SelectionResults[0] as ElementId;

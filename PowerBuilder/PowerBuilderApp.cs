@@ -14,6 +14,7 @@ using System.Runtime.CompilerServices;
 using PowerBuilder.Extensions;
 using Autodesk.Revit.DB.Events;
 using PowerBuilder.Services;
+using Serilog;
 
 #endregion
 
@@ -23,15 +24,34 @@ namespace PowerBuilder
     {
         public Result OnStartup(UIControlledApplication a)
         {
-            RibbonPanel ribbonPanel = a.CreateRibbonPanel("PowerBuilder");
-            PulldownButtonData pullDownData = new PulldownButtonData("pldbPBCommands", "Power Tools");
-            PulldownButton pullDownButton = ribbonPanel.AddItem(pullDownData) as PulldownButton;
+            DateTime Start = DateTime.Now;
+            string LogFileName = $"PowerBuilderLog.txt";
+            string LOG_FILE_PATH = Environment.GetFolderPath( Environment.SpecialFolder.ApplicationData) + "\\PowerBuilder\\"+LogFileName;
+            string FILE_OUTPUT_TEMPLATE = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
+            string JOURNAL_OUTPUT_TEMPLATE = "PBA:{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
+            Debug.WriteLine($"++Initialize Logger at: {LOG_FILE_PATH}");
+            /*
+             * I guess it's reasonable to have a logger for the application, and a different logger for the other components like Business Logic and UI
+             */
+            #region Initialize Add-in Logger
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.File(LOG_FILE_PATH, outputTemplate: FILE_OUTPUT_TEMPLATE)
+                .CreateLogger();
+            Debug.WriteLine($"++Logger Initialized");
+            #endregion
 
             #region Initialize Singletons
+            Log.Debug("INITIALIZE SINGLETONS");
             ViewSynchronizationService Vss = ViewSynchronizationService.Instance;
             #endregion
 
             #region Assemble Ribbon Components
+            Log.Debug("ASSEMBLE RIBBON COMPONENTS");
+            RibbonPanel ribbonPanel = a.CreateRibbonPanel("PowerBuilder");
+            PulldownButtonData pullDownData = new PulldownButtonData("pldbPBCommands", "Power Tools");
+            PulldownButton pullDownButton = ribbonPanel.AddItem(pullDownData) as PulldownButton;
+
             //Collect Commands and compose into RibbonItems
             //TODO: port this over to its own class RibbonBuilder or something
             string thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
@@ -44,9 +64,10 @@ namespace PowerBuilder
                 pullDownButton.AddPushButton(CurrentPushButton);
             }
             #endregion
-            
+
             #region Configure IUpdaters
             //initialize updaters
+            Log.Debug("REGISTER UPDATERS");
             VerifyAndLogUpdater VaLUpdater = new VerifyAndLogUpdater(a.ActiveAddInId);
             SpaceUpdater SpaceDms = new SpaceUpdater(a.ActiveAddInId);
 
@@ -56,6 +77,7 @@ namespace PowerBuilder
             #endregion
 
             #region Register Event Handlers
+            Log.Debug("REGISTER EVENT HANDLERS");
             try {
                 a.ControlledApplication.DocumentOpened += new EventHandler<DocumentOpenedEventArgs>(VaLUpdater.updater_OnDocumentOpened);
                 a.ControlledApplication.DocumentClosing += new EventHandler<DocumentClosingEventArgs>(VaLUpdater.updater_OnDocumentClosing);
@@ -66,7 +88,7 @@ namespace PowerBuilder
                 return Result.Failed;
             }
             #endregion
-
+            Log.Debug("STARTUP COMPLETE");
             return Result.Succeeded;
         }
         private List<(string fullName,string displayName, string tooltip)> GetCommandClasses(string sNameSpace) {
@@ -92,6 +114,10 @@ namespace PowerBuilder
             VerifyAndLogUpdater VaLUpdater = new VerifyAndLogUpdater(a.ActiveAddInId);
             SpaceUpdater SpaceDms = new SpaceUpdater(a.ActiveAddInId);
             ViewSynchronizationService Vss = ViewSynchronizationService.Instance;
+
+            #region Close logger
+            Log.CloseAndFlush();
+            #endregion
 
             #region Unregister Event Handlers
             a.ControlledApplication.DocumentOpened -= VaLUpdater.updater_OnDocumentOpened;

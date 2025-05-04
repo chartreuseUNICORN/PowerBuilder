@@ -5,6 +5,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using PowerBuilder.Interfaces;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,7 +29,7 @@ namespace PowerBuilder.Commands
             Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
             Document doc = uidoc.Document;
 
-            Debug.WriteLine("+\tCommand2 Executed");
+            Log.Information("IExternalCommand: {Name}", DisplayName);
             TaskDialog.Show("Command1", "Hello World");
 
             return Result.Succeeded;

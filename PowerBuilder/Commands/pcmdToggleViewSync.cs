@@ -7,6 +7,7 @@ using Autodesk.Revit.UI.Events;
 using Autodesk.Revit.UI.Selection;
 using PowerBuilder.Interfaces;
 using PowerBuilder.Services;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,7 +32,7 @@ namespace PowerBuilder.Commands
             Document doc = uidoc.Document;
             ViewSynchronizationService Vss = ViewSynchronizationService.Instance;
 
-            Debug.WriteLine($"pcmd-ToggleViewSync:\tVSS Status:{Vss.Status}");
+            bool VssInitial = Vss.Status;
             
             if (!Vss.Status) {
                 Vss.ActivateService(uiapp);
@@ -41,7 +42,7 @@ namespace PowerBuilder.Commands
                 Vss.DeactivateService(uiapp);
                 Vss.Status = false;
             }
-
+            Log.Information("Vss State change {initial} -> {final}", VssInitial, Vss.Status);
                 return Result.Succeeded;
         }
         public PowerDialogResult GetInput(UIApplication uiapp) {

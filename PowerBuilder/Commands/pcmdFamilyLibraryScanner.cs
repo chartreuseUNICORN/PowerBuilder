@@ -56,7 +56,7 @@ namespace PowerBuilder.Commands
             using (StreamWriter sw = new StreamWriter(DesktopPath)) {
                 foreach (string file in files) {
                     FileInfo f = new FileInfo(file);
-                    List<string> FileData = new List<string>() { f.Name, f.Length.ToString(), f.LastAccessTime.ToFileTime().ToString()};
+                    List<string> FileData = new List<string>() { f.Name, f.Length.ToString(), f.LastAccessTime.ToShortDateString()};
 
                     /*
                      * TODO: implement partatom xml scan for Category, classification parameters
@@ -67,7 +67,6 @@ namespace PowerBuilder.Commands
                     
                 }
             }
-
         }
     }
 }
