@@ -65,7 +65,7 @@ namespace PowerBuilder
             }
             #endregion
 
-            #region Configure IUpdaters
+            #region Register Dynamic Model Updates
             //initialize updaters
             Log.Debug("REGISTER UPDATERS");
             VerifyAndLogUpdater VaLUpdater = new VerifyAndLogUpdater(a.ActiveAddInId);
