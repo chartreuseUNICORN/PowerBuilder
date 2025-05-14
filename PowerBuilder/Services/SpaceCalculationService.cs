@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Nice3point.Revit.Extensions;
+using Autodesk.Revit.DB;
 
 namespace PowerBuilder.Services {
     public class SpaceCalculationService {
@@ -87,7 +89,7 @@ namespace PowerBuilder.Services {
         private void SetRoundedAirflowToElements (Autodesk.Revit.DB.Mechanical.Space Space, IEnumerable<Element> AirTerminals) {
             Parameter SpecifiedAirflow = Space.get_Parameter(BuiltInParameter.ROOM_DESIGN_SUPPLY_AIRFLOW_PARAM);
             ForgeTypeId AirflowUnit = SpecifiedAirflow.GetUnitTypeId();
-            double SpecifiedAirflowValue = SpecifiedAirflow.AsDouble().ToUnit(AirflowUnit);
+            double SpecifiedAirflowValue = UnitUtils.ConvertFromInternalUnits(SpecifiedAirflow.AsDouble(), AirflowUnit);
             
             int AirTerminalQuantity = AirTerminals.Count();
 
