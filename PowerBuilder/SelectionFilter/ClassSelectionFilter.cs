@@ -15,11 +15,11 @@ namespace PowerBuilder.SelectionFilter
         private List<Type> _classes;
         public ClassSelectionFilter(Type ThisClass)
         {
-            _classes = new List<Type>() { ThisClass };
+            _classes = [ ThisClass ];
         }
         public ClassSelectionFilter(List<Type> TheseClasses)
         {
-            _classes = new List<Type>(TheseClasses);
+            _classes = TheseClasses;
         }
         public bool AllowElement(Element elem)
         {

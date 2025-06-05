@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace PowerBuilder.IUpdaters {
     public class SpaceUpdater : DocumentScopeUpdater, IUpdater {
@@ -47,7 +48,7 @@ namespace PowerBuilder.IUpdaters {
         }
 
         public override void updater_OnDocumentOpened(object sender, DocumentOpenedEventArgs args) {
-            
+            Log.Debug($"{this.GetUpdaterName()} | document opened @ {args.Document.Title}");
             try {
                 if (!args.Document.IsFamilyDocument) {
                     ElementClassFilter SpaceElementFilter = new ElementClassFilter(typeof(Autodesk.Revit.DB.SpatialElement));

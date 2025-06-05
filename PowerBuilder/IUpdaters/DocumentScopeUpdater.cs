@@ -6,24 +6,24 @@ using System.Linq;
 using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace PowerBuilder.IUpdaters {
     public abstract class DocumentScopeUpdater {
 
         protected UpdaterId _uid;
         protected AddInId _appId;
+        protected bool LoadOnStartup;
 
         /// <summary>
-        /// Base class for Parameter based updaters
+        /// Base class for IUpdaters targeting Documents
         /// </summary>
-        /// <param name="id">Active AddInId</param>
-        /// <param name="ParameterGuid"></param>
-        /// <param name="UpdaterGuid"></param>
 
         public abstract void updater_OnDocumentOpened(object sender, DocumentOpenedEventArgs args);
         
         public virtual void updater_OnDocumentClosing (object sender, DocumentClosingEventArgs args) {
             UpdaterRegistry.RemoveDocumentTriggers(_uid, args.Document);
+            Log.Debug($"{this.GetType().Name} | document closing event @ {args.Document.Title}");
         }
     }
 }

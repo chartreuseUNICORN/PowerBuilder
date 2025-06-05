@@ -13,11 +13,11 @@ namespace PowerBuilder.SelectionFilter
         private List<BuiltInCategory> _cats;
         public CategorySelectionFilter(BuiltInCategory cat)
         {
-            _cats = new List<BuiltInCategory>() { cat };
+            _cats = [ cat ];
         }
         public CategorySelectionFilter(List<BuiltInCategory> cats)
         {
-            _cats = new List<BuiltInCategory>(cats);
+            _cats = cats;
         }
         public bool AllowElement(Element elem)
         {

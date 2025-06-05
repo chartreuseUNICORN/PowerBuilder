@@ -17,7 +17,7 @@ namespace PowerBuilder.IUpdaters {
         static private AddInId _appId;
         static private ChangePriority _changePriority;
         static private ForgeTypeId _KeyParameterTypeId;
-        public bool LoadOnStartup { get; set; } = true; //this should be required as part of IPowerUpdater (or base class?)
+        static bool LoadOnStartup = true; //this should be required as part of IPowerUpdater (or base class?)
         public SystemNameUpdater (AddInId id) {
             
             _appId = id;
@@ -35,11 +35,13 @@ namespace PowerBuilder.IUpdaters {
                     
                     Parameter Name = CurrentSystem.GetParameter(_KeyParameterTypeId);
                     ElementType CurrentSystemType = doc.GetElement(CurrentSystem.GetTypeId()) as ElementType;
-                    string ExpectedSystemName = BaseEquipment.get_Parameter(BuiltInParameter.ALL_MODEL_MARK).AsValueString() +
-                        CurrentSystemType.get_Parameter(BuiltInParameter.RBS_SYSTEM_ABBREVIATION_PARAM).AsValueString();
+                    List<string> NameParts = new List<string>() { 
+                        CurrentSystemType.get_Parameter(BuiltInParameter.RBS_SYSTEM_ABBREVIATION_PARAM).AsValueString(),
+                        BaseEquipment.get_Parameter(BuiltInParameter.ALL_MODEL_MARK).AsValueString()
+                    };
+                    string ExpectedSystemName = String.Join("_", NameParts);
                     
                     if (Name.AsString() != ExpectedSystemName) {
-                        
                         Name.Set(ExpectedSystemName);
                     }
                 }
@@ -47,7 +49,7 @@ namespace PowerBuilder.IUpdaters {
             Debug.WriteLine($"{this.GetType().Name} COMPLETE: {data.GetModifiedElementIds().Count} items changed");
         }
         public string GetUpdaterName() {
-            return "Element Verification Updater";
+            return "System Name Updater";
         }
         public UpdaterId GetUpdaterId() {
             return _uid;
@@ -71,12 +73,6 @@ namespace PowerBuilder.IUpdaters {
             catch (Exception ex) {
                 Log.Debug($"Trigger Added");
             }
-        }
-        
-        public void updater_OnDocumentClosing (object sender, DocumentClosingEventArgs args) {
-            UpdaterRegistry.RemoveDocumentTriggers(_uid, args.Document);
-
-            Debug.WriteLine($"-TRIGGER REMOVED: {args.Document.Title}");
         }
     }
 }

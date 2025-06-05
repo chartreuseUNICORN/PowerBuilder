@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace PowerBuilder.IUpdaters {
     internal class VerifyAndLogUpdater : IUpdater {
@@ -49,7 +50,7 @@ namespace PowerBuilder.IUpdaters {
             return "no additional information";
         }
         public void updater_OnDocumentOpened (object sender, DocumentOpenedEventArgs args) {
-            Debug.WriteLine($"{args.Document.Title} opened: ADD TRIGGER");
+            Log.Debug($"{args.Document.Title} opened: ADD TRIGGER VerifyAndLogUpdater");
             SharedParameterElement KeyParameterElement = new FilteredElementCollector(args.Document)
                     .OfClass(typeof(SharedParameterElement))
                     .Cast<SharedParameterElement>()
@@ -61,7 +62,7 @@ namespace PowerBuilder.IUpdaters {
                 ElementClassFilter ValidateElementFilter = new ElementClassFilter(typeof(FamilyInstance));
                 UpdaterRegistry.AddTrigger(_uid, args.Document, ValidateElementFilter, Element.GetChangeTypeParameter(KeyParameterElement.Id));
 
-                Debug.WriteLine("+key parameter found => TRIGGER ADDED");
+                Log.Debug($"VerifyAndLogUpdater:\tkey parameter: {KeyParameterElement.Name} found => TRIGGER ADDED");
             }
         }
         
