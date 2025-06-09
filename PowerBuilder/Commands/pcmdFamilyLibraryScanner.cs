@@ -9,6 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Xml;
+using System.Linq;
+using Autodesk.Revit.DB.ExtensibleStorage;
+using System.Windows.Forms;
 
 #endregion
 
@@ -28,9 +32,14 @@ namespace PowerBuilder.Commands
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
             Document doc = uidoc.Document;
-
+            string TargetLibraryPath;
+            /* uncomment when testing complete
             PowerDialogResult res = GetInput(uiapp);
-            ScanFamilyLibrary(res.SelectionResults[0] as string);
+            TargetLibraryPath = res.SelectionResults[0] as string
+            */
+            TargetLibraryPath = "C:\\Users\\mclough\\OneDrive - Symetri\\_Coding\\PowerBuilder_Test\\TEST_FamilyLibrary";
+
+            ScanFamilyLibrary(TargetLibraryPath);
 
             return Result.Succeeded;
         }
@@ -52,21 +61,54 @@ namespace PowerBuilder.Commands
             //it seems sensible to save it to the path that's selected
             //but Desktop and AppData also seem reasonable
             string DesktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\FamilyLibraryScanner.txt";
+            string[] FileHeaders = ["Name", "Size", "AccessTime", "Category", "OmniClass Number", "Type Qty", "Authoring Version"];
 
             using (StreamWriter sw = new StreamWriter(DesktopPath)) {
+                sw.WriteLine(String.Join(",", FileHeaders));
                 foreach (string file in files) {
                     FileInfo f = new FileInfo(file);
                     List<string> FileData = new List<string>() { f.Name, f.Length.ToString(), f.LastAccessTime.ToShortDateString()};
+                    Debug.WriteLine(file);
 
-                    /*
-                     * TODO: implement partatom xml scan for Category, classification parameters
-                     * TODO: generalize this to be a more dynamic partatom query builder to be dynamic, or accept customized user inputs
-                     */
-
-                    sw.WriteLine(String.Join(",",FileData));
+                    XmlDocument FamilyPartatom = ParsePartatomFromFile(file);
+                    FileData.Add(GetValueByXpath (FamilyPartatom, "//atom:category[atom:scheme='adsk:revit:grouping']/atom:term"));
+                    FileData.Add(GetValueByXpath(FamilyPartatom, "//A:group[A:title='Identity Data']/atom:OmniClass_Number"));
+                    FileData.Add(GetValueByXpath(FamilyPartatom, "//A:family/A:variationCount"));
+                    FileData.Add(GetValueByXpath(FamilyPartatom, "//A:design-file/A:product-version"));
                     
+                    sw.WriteLine(String.Join(",",FileData));
                 }
             }
+        }
+        public XmlDocument ParsePartatomFromFile(string path) { 
+            string PartatomString = null;
+            string xmlBase = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+            XmlDocument PartAtom = new XmlDocument();
+
+            using (StreamReader reader = new StreamReader(path)) {
+                while (PartatomString == null) { 
+                    string check = reader.ReadLine();
+                    if (check.StartsWith("<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:A=\"urn:schemas-autodesk-com:partatom\">")) {
+                        PartatomString = xmlBase+check;
+                    }
+                }
+            }
+            
+            PartAtom.LoadXml(PartatomString);
+            return PartAtom;
+        }
+        public string GetValueByXpath (XmlDocument partatom, string Xpath) {
+            //is this better as "GetXmlDataByDOMquery"?
+
+            List<string> FamilyData = new List<string>();
+            XmlNamespaceManager nsmgr = new XmlNamespaceManager(partatom.NameTable);
+            nsmgr.AddNamespace("atom", "http://www.w3.org/2005/Atom");
+            nsmgr.AddNamespace("A", "urn:schemas-autodesk-com:partatom");
+            
+            XmlNode target = partatom.SelectSingleNode(Xpath, nsmgr);
+            Debug.WriteLine(target?.InnerText ?? string.Empty);
+            
+            return target?.InnerText ?? string.Empty;
         }
     }
 }
