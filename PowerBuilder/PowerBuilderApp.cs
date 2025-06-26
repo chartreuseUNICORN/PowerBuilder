@@ -45,7 +45,11 @@ namespace PowerBuilder
 
             #region Initialize Singletons
             Log.Debug("INITIALIZE SINGLETONS");
+            string ApiKey = GetApiKeyFromConfig();
             ViewSynchronizationService Vss = ViewSynchronizationService.Instance;
+            ClaudeConnector.Initialize(ApiKey);
+            string checkClaude = ClaudeConnector.Instance.Client.GetTextResponseAsync("Claude can you receive this message").Result;
+            Log.Debug(checkClaude);
             #endregion
 
             #region Assemble Ribbon Components
@@ -179,6 +183,14 @@ namespace PowerBuilder
                 }
             }
             return CommandData;
+        }
+        private string GetApiKeyFromConfig() {
+            // Option 1: From environment variable (recommended)
+            string apiKey = Environment.GetEnvironmentVariable("CLAUDE_API_KEY", EnvironmentVariableTarget.User);
+            if (!string.IsNullOrEmpty(apiKey))
+                return apiKey;
+
+            return null;
         }
         /*
         private void SetupDynamicModelUpdates (UIControlledApplication a, string NameSpace) {
