@@ -51,7 +51,10 @@ namespace PowerBuilder.Extensions {
                         if (prop.CanWrite && prop.CanRead) {
                             writer.WriteStartElement($"{prop.Name}");
                             writer.WriteAttributeString("type", prop.PropertyType.ToString());
-                            writer.WriteString(prop.GetValue(formatOptions).ToString());
+                            if (prop.Name == "RoundingMethod") //this is ugly, but works
+                                writer.WriteValue((int)(prop.GetValue(formatOptions)));
+                            else
+                                writer.WriteString(prop.GetValue(formatOptions).ToString());
                             writer.WriteEndElement();
                         }
                     }
@@ -86,7 +89,7 @@ namespace PowerBuilder.Extensions {
                 ForgeTypeId SpecTypeId = new ForgeTypeId(SpecTypeNode.InnerText);
                 FormatOptions fo = new FormatOptions();
                 
-                RoundingMethod? xRoundingMethod = RoundingMethod.Nearest;
+                RoundingMethod xRoundingMethod = RoundingMethod.Nearest;
 
                 Log.Debug($"SpecTypeId:\t{SpecTypeNode.InnerText}");
                 Log.Debug("FormatOption properties");
@@ -114,42 +117,45 @@ namespace PowerBuilder.Extensions {
                         case "SuppressSpaces":
                             xSuppressSpaces = FoProperty.InnerText == "True";
                             break;
-                        case "SuppressLeadingZeroes":
+                        case "SuppressLeadingZeros":
                             xSuppressLeadingZeros = FoProperty.InnerText == "True";
                             break;
-                        case "SuppressTrailingZeroes":
-                            xUseDefault = FoProperty.InnerText == "True";
+                        case "SuppressTrailingZeros":
+                            xSuppressTrailingZeros = FoProperty.InnerText == "True";
                             break;
                         case "Accuracy":
-                            xAccuracy = float.Parse(FoProperty.Name);
+                            xAccuracy = float.Parse(FoProperty.InnerText);
                             break;
                         case "RoundingMethod":
-                            xRoundingMethod = (RoundingMethod)Enum.Parse(typeof(RoundingMethod), FoProperty.Name);
+                            xRoundingMethod = (RoundingMethod)Convert.ToInt16(FoProperty.InnerText);
+                            break;
+                        case "UseDefault":
+                            xUseDefault = Convert.ToBoolean(FoProperty.InnerText);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException($"invalid property name: {FoProperty.Name}");
                     }
-                    //i think this is fine as an "always" action. no need to try and check for FormatOptions equality before changing?
-                    if (!xUseDefault) {
-                        fo.UseDefault = xUseDefault;
-                        fo.RoundingMethod = xRoundingMethod.Value;
-                        fo.SetUnitTypeId(new ForgeTypeId(xUnitTypeId));
-                        fo.SuppressLeadingZeros = xSuppressLeadingZeros;
-                        fo.SuppressTrailingZeros = xSuppressTrailingZeros;
-                        fo.SuppressSpaces = xSuppressSpaces;
-                        fo.UsePlusPrefix = xUsePlusPrefix;
-                        fo.UseDigitGrouping = xUseDigitGrouping;
-                        if (fo.IsValidAccuracy(xAccuracy)) fo.Accuracy = xAccuracy;
-                        if (fo.IsValidSymbol(new ForgeTypeId(xSymbolTypeId))) fo.SetSymbolTypeId(new ForgeTypeId(xSymbolTypeId));
-                    }
-                    else {
-                        fo.UseDefault = xUseDefault;
-                    }
-                    bool check = fo.Equals(units.GetFormatOptions(SpecTypeId));
-                    Debug.WriteLine($"modifiable spec equal?? {check}");
-                    if (fo.IsValidForSpec(SpecTypeId)) units.SetFormatOptions(SpecTypeId, fo);
-
                 }
+                //i think this is fine as an "always" action. no need to try and check for FormatOptions equality before changing?
+                if (!xUseDefault) {
+                    fo.UseDefault = xUseDefault;
+                    fo.RoundingMethod = xRoundingMethod;
+                    fo.SetUnitTypeId(new ForgeTypeId(xUnitTypeId));
+                    fo.SuppressLeadingZeros = xSuppressLeadingZeros;
+                    fo.SuppressTrailingZeros = xSuppressTrailingZeros;
+                    fo.SuppressSpaces = xSuppressSpaces;
+                    fo.UsePlusPrefix = xUsePlusPrefix;
+                    fo.UseDigitGrouping = xUseDigitGrouping;
+                    if (fo.IsValidAccuracy(xAccuracy)) fo.Accuracy = xAccuracy;
+                    if (fo.IsValidSymbol(new ForgeTypeId(xSymbolTypeId))) fo.SetSymbolTypeId(new ForgeTypeId(xSymbolTypeId));
+                }
+                else {
+                    fo.UseDefault = xUseDefault;
+                }
+                bool check = fo.Equals(units.GetFormatOptions(SpecTypeId));
+                Debug.WriteLine($"modifiable spec equal?? {check}");
+                if (fo.IsValidForSpec(SpecTypeId)) units.SetFormatOptions(SpecTypeId, fo);
+                else Debug.WriteLine($"could not modify spec??");
             }
         }
     }

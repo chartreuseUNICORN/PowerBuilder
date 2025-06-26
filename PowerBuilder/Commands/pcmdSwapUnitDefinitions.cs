@@ -60,10 +60,11 @@ namespace PowerBuilder.Commands
                 MissingFileDialog.Show();
                 ExportControl = MissingFileDialog.DefaultButton == TaskDialogResult.Ok;
             }
+            /* 
             if (ExportControl) {
                 docUnits.ExportToXml(UnitsFile);
             }
-
+            */
             if (UnitsXml != new XmlDocument()) {
                 using (Transaction T = new Transaction(doc, "load-unit-specifications")) {
                     T.Start();

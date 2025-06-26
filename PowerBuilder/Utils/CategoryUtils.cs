@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace PowerBuilder.Utils {
     public class CategoryUtils {
     
-    public CategorySet GetProjectParameterCategories (Document doc, string ParameterName) {
+    public static CategorySet GetProjectParameterCategories (Document doc, string ParameterName) {
 
             BindingMap ProjectParametersMap = doc.ParameterBindings;
             //How does this want to address parameters with the same names..
@@ -19,7 +19,7 @@ namespace PowerBuilder.Utils {
             throw new KeyNotFoundException($"{ParameterName} not a valid Key");
         }
 
-    public CategorySet GetProjectParameterCategories (Document doc, Definition Parameter) {
+    public static CategorySet GetProjectParameterCategories (Document doc, Definition Parameter) {
             BindingMap ProjectParametersMap = doc.ParameterBindings;
 
             if (ProjectParametersMap.Contains(Parameter)) {
