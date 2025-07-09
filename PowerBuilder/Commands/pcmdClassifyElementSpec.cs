@@ -53,8 +53,6 @@ namespace PowerBuilder.Commands
                 target = doc.GetElement(sel.GetElementIds().First());
             }
 
-            // TODO: Remove
-            //ElementClassification elemClass = ClassifierSpecification.ClassifyElement(target, specCulture);
             ElementClassification elemClass = SpecificationClassifier.Classify(target);
             string report = $@"Element: {target.Id}
     Classification System:  {specCulture}

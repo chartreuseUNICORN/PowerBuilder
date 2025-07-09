@@ -60,8 +60,6 @@ namespace PowerBuilder.Commands
                 target = doc.GetElement(sel.GetElementIds().First());
             }
 
-            //TODO: Remove
-            //ElementClassification elemClass = ClassifierSpace.ClassifySpaceTypeByRoom(target, doc);
             ElementClassification elemClass = SpaceClassifier.Classify(target);
             string report = $@"Element: {target.Id}
     Classification System:  Spaces

@@ -143,6 +143,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Enums\" />
     <Folder Include="EventHandlers\" />
     <Folder Include="Properties\" />
   </ItemGroup>

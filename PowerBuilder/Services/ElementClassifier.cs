@@ -42,10 +42,11 @@ namespace PowerBuilder.Services {
 Evaluate all the data provided about the element including inheritance hierarchy, category, and parameter values as a basis for your answer    
 Do not include any markdown formatting or code blocks. Return only the JSON object.";
 
+            _specCulture = culture;
             _cRequest = cQuery;
         }
         public ElementClassification Classify(Element e) {
-            ClaudeMessage cMessage = BuildPrompt(e.ToJson(), _specCulture);
+            ClaudeMessage cMessage = BuildPrompt(e.ToJson());
             _cRequest.Messages.Add(cMessage);
 
             string response = _cc.GetTextResponseAsync(_cRequest).Result.Trim();
@@ -53,14 +54,13 @@ Do not include any markdown formatting or code blocks. Return only the JSON obje
 
             return elementClassification;
         }
-        private static ClaudeMessage BuildPrompt(string elementJson, SpecCulture culture) {
+        private static ClaudeMessage BuildPrompt(string elementJson) {
             ClaudeMessage cMessage = new ClaudeMessage();
             cMessage.Role = "user";
 
             string basePrompt = "Please return a classification for an element identified with this data";
-            var cultureInstruction = $"perform a classification based on the {culture.Name} system";
 
-            cMessage.Content = $"{basePrompt}\n\n{cultureInstruction}" +
+            cMessage.Content = $"{basePrompt}\n\n" +
                 $"Element Data to Classify:\n{elementJson}\n\n" +
                 "Provide your classification response as JSON only.";
 

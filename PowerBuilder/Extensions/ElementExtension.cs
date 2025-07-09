@@ -20,14 +20,21 @@ namespace PowerBuilder.Extensions {
 
         public static string ToJson(this Element e) {
             try {
-                var data = new {
-                    ElementId = e.Id.Value,
-                    Name = e.Name ?? "Unnamed",
-                    Document = e.Document?.Title ?? "Unknown Document",
-                    Category = e.Category?.Name ?? "Unknown",
-                    ClassHierarchy = GetClassHierarchy(e.GetType()),
-                    Parameters = ExtractParameters(e)
+                Dictionary<string, string> data = new Dictionary<string, string> {
+                    { "ElementId" ,e.Id.Value.ToString()},
+                    { "Name", e.Name ?? "Unnamed" },
+                    { "Document", e.Document?.Title ?? "Unknown Document" },
+                    { "Category", e.Category ?.Name ?? "Unknown" },
+                    { "ClassHierarchy", GetClassHierarchy(e.GetType()).ToString() },
+                    { "Parameters", JsonSerializer.Serialize(ExtractParameters(e), JsonOptions) }
                 };
+
+                if(e.GetTypeId().Value != -1) {
+                    Document doc = e.Document;
+                    Element eType = doc.GetElement(e.GetTypeId());
+                    string typeData = eType.ToJson();
+                    data.Add("TypeData", typeData);
+                }
 
                 return JsonSerializer.Serialize(data, JsonOptions);
             }
