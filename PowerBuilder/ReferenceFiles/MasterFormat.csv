@@ -3816,11 +3816,11 @@
 27 15 13,Communications Copper Horizontal Cabling
 27 15 16,Voice Communications Horizontal Cabling
 27 15 19,Data Communications Horizontal Cabling
-27 15 23,Audio-Video Communications Horizontal Cabling
+27 15 01.23,Audio-Video Communications Horizontal Cabling
 27 15 23,Communications Optical Fiber Horizontal Cabling
 27 15 33,Communications Coaxial Horizontal Cabling
 27 15 39,Patient Monitoring and Telemetry Communications Horizontal Cabling
-27 15 43,Nurse Call and Intercom Communications Horizontal Cabling
+27 15 01.43,Nurse Call and Intercom Communications Horizontal Cabling
 27 15 43,Communications Faceplates and Connectors
 27 15 46,Paging Communications Horizontal Cabling
 27 15 49,Intermediate Frequency/Radio Frequency Communications Horizontal Cabling

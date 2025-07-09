@@ -2,33 +2,30 @@
 using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
-using Autodesk.Revit.DB.Analysis;
-using Autodesk.Revit.DB.Architecture;
-using Autodesk.Revit.DB.Mechanical;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using PowerBuilder.Claude;
 using PowerBuilder.Extensions;
 using PowerBuilder.Interfaces;
-using PowerBuilder.Objects;
 using PowerBuilder.SelectionFilter;
-using PowerBuilder.Services;
 using PowerBuilder.Services;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text.Json;
 using System.Text.Json.Serialization;
+using PowerBuilder.Objects;
+using System.Text.Json;
+using PowerBuilder.Services;
 
 #endregion
 
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdClassifySpaceType : IPowerCommand {
-        public string DisplayName { get; } = "Classify Space";
-        public string ShortDesc { get; } = "Connect with Claude to Classify the Space Type";
+    public class pcmdClassifyElementSpec : IPowerCommand {
+        public string DisplayName { get; } = "Classify Element Specification";
+        public string ShortDesc { get; } = "Connect with Claude to report estimated Element Clasification";
         public bool RibbonIncludeFlag { get; } = true;
         public Result Execute(
           ExternalCommandData commandData,
@@ -40,19 +37,15 @@ namespace PowerBuilder.Commands
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
             Document doc = uidoc.Document;
-            SpecCulture spaceTypeDefs = new SpecCulture("Space Types",
-                new FilteredElementCollector(doc)
-                .OfClass(typeof(HVACLoadSpaceType))
-                .ToElements()
-                .ToDictionary(x => Convert.ToString(x.Id.Value), x => x.Name));
-            ElementClassifier SpaceClassifier = new ElementClassifier(spaceTypeDefs);
+
+            SpecCulture specCulture = new SpecCulture("MasterFormat",@"C:\Users\mclough\source\repos\PowerBuilder\PowerBuilder\ReferenceFiles\MasterFormat.csv");
+            ElementClassifier SpecificationClassifier = new ElementClassifier(specCulture);
 
             Selection sel = uidoc.Selection;
             Element target = null;
-
             if (sel.GetElementIds().Count == 0) {
                 // Nothing selected, let user pick
-                Reference reference = sel.PickObject(ObjectType.Element, new ClassSelectionFilter(typeof(Room)));
+                Reference reference = sel.PickObject(ObjectType.Element, new ClassSelectionFilter(typeof(FamilyInstance)));
                 target = doc.GetElement(reference.ElementId);
             }
             else {
@@ -60,11 +53,11 @@ namespace PowerBuilder.Commands
                 target = doc.GetElement(sel.GetElementIds().First());
             }
 
-            //TODO: Remove
-            //ElementClassification elemClass = ClassifierSpace.ClassifySpaceTypeByRoom(target, doc);
-            ElementClassification elemClass = SpaceClassifier.Classify(target);
+            // TODO: Remove
+            //ElementClassification elemClass = ClassifierSpecification.ClassifyElement(target, specCulture);
+            ElementClassification elemClass = SpecificationClassifier.Classify(target);
             string report = $@"Element: {target.Id}
-    Classification System:  Spaces
+    Classification System:  {specCulture}
     Specification Number:  {elemClass.ClassificationNumber}
     Specification Name: {elemClass.ClassificationName}
 
