@@ -68,7 +68,7 @@ namespace PowerBuilder.Commands
             if (UnitsXml != new XmlDocument()) {
                 using (Transaction T = new Transaction(doc, "load-unit-specifications")) {
                     T.Start();
-                    docUnits.ImportFromXml(UnitsXml);
+                    doc.SetUnits(docUnits.ImportFromXml(UnitsXml));
                     T.Commit();
                 }
             }
