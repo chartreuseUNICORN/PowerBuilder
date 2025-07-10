@@ -3,6 +3,7 @@ using Autodesk.Windows;
 using PowerBuilder.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -10,6 +11,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace PowerBuilder.Claude {
     public class ClaudeClient : IClaudeClient {
@@ -76,9 +78,16 @@ namespace PowerBuilder.Claude {
         }
 
         public async Task<ClaudeResponse> PostHttpAsync(ClaudeRequest request, CancellationToken cancellationToken = default) {
+            var stopwatch = Stopwatch.StartNew();
+            var requestId = Guid.NewGuid().ToString("N");
+            
             try {
                 var json = JsonSerializer.Serialize(request, _jsonOptions);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                Log.Information("Claude API Request [{RequestId}] - Model: {Model}, MaxTokens: {MaxTokens}, Messages: {MessageCount}", 
+                    requestId, request.Model, request.MaxTokens, request.Messages?.Count ?? 0);
+                Log.Debug("Claude API Request [{RequestId}] - Content: {RequestContent}", requestId, json);
 
                 // Use ConfigureAwait(false) to avoid capturing the synchronization context
                 var response = await _httpClient.PostAsync("/v1/messages", content, cancellationToken)
@@ -87,7 +96,11 @@ namespace PowerBuilder.Claude {
                 var responseContent = await response.Content.ReadAsStringAsync()
                     .ConfigureAwait(false);
 
+                stopwatch.Stop();
+
                 if (!response.IsSuccessStatusCode) {
+                    Log.Error("Claude API Request [{RequestId}] failed in {ElapsedMs}ms - Status: {StatusCode}, Response: {ResponseContent}", 
+                        requestId, stopwatch.ElapsedMilliseconds, response.StatusCode, responseContent);
                     throw new ClaudeException(
                         $"Claude API request failed: {response.StatusCode}",
                         (int)response.StatusCode,
@@ -95,15 +108,28 @@ namespace PowerBuilder.Claude {
                 }
 
                 var claudeResponse = JsonSerializer.Deserialize<ClaudeResponse>(responseContent, _jsonOptions);
+                
+                Log.Information("Claude API Request [{RequestId}] completed in {ElapsedMs}ms - Tokens: {InputTokens}/{OutputTokens}", 
+                    requestId, stopwatch.ElapsedMilliseconds, 
+                    claudeResponse?.Usage?.InputTokens ?? 0, 
+                    claudeResponse?.Usage?.OutputTokens ?? 0);
+                Log.Debug("Claude API Response [{RequestId}] - Content: {ResponseContent}", requestId, responseContent);
+
                 return claudeResponse ?? throw new ClaudeException("Failed to deserialize Claude response");
             }
             catch (HttpRequestException ex) {
+                stopwatch.Stop();
+                Log.Error(ex, "Claude API Request [{RequestId}] network error after {ElapsedMs}ms", requestId, stopwatch.ElapsedMilliseconds);
                 throw new ClaudeException("Network error occurred while calling Claude API", ex);
             }
             catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException) {
+                stopwatch.Stop();
+                Log.Error(ex, "Claude API Request [{RequestId}] timed out after {ElapsedMs}ms", requestId, stopwatch.ElapsedMilliseconds);
                 throw new ClaudeException("Request to Claude API timed out", ex);
             }
             catch (JsonException ex) {
+                stopwatch.Stop();
+                Log.Error(ex, "Claude API Request [{RequestId}] JSON error after {ElapsedMs}ms", requestId, stopwatch.ElapsedMilliseconds);
                 throw new ClaudeException("Failed to process Claude API response", ex);
             }
         }

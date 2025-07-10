@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace PowerBuilder.Extensions {
-    public static class ParameterUtilsExtension {
+    public static class ParameterExtensions {
         /// <summary>
         /// Extension method to set current Parameter value to input Parameter value
         /// </summary>

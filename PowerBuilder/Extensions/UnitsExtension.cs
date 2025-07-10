@@ -65,7 +65,7 @@ namespace PowerBuilder.Extensions {
                 writer.WriteEndElement();
             }//todo: break this into component functions to serialize xmldocument fragments, then join the fragments at the top level
         }
-        public static void ImportFromXml(this Units units, XmlDocument XmlUnitConfig) {
+        public static Units ImportFromXml(this Units units, XmlDocument XmlUnitConfig) {
             Log.Debug("READ UNIT CONFIGURATIONS");
             
             XmlReaderSettings settings = new XmlReaderSettings();
@@ -152,11 +152,16 @@ namespace PowerBuilder.Extensions {
                 else {
                     fo.UseDefault = xUseDefault;
                 }
-                bool check = fo.Equals(units.GetFormatOptions(SpecTypeId));
-                Debug.WriteLine($"modifiable spec equal?? {check}");
-                if (fo.IsValidForSpec(SpecTypeId)) units.SetFormatOptions(SpecTypeId, fo);
-                else Debug.WriteLine($"could not modify spec??");
+
+                if (UnitUtils.IsMeasurableSpec(SpecTypeId))
+                    if (fo.IsValidForSpec(SpecTypeId))
+                        units.SetFormatOptions(SpecTypeId, fo);
+                    else
+                        Debug.WriteLine($"invalid spec: {SpecTypeId.ToLabel()}");
+                else
+                    Debug.WriteLine($"could not modify spec {SpecTypeId}");
             }
+            return units;
         }
     }
 }

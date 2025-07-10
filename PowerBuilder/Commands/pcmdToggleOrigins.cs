@@ -14,9 +14,9 @@ using PowerBuilder.Utils;
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdToggleSectionBox : IPowerCommand {
-        public string DisplayName { get; } = "Toggle Section Box";
-        public string ShortDesc { get; } = "Toggle the Section Box visibility in the active view";
+    public class pcmdToggleOrigins: IPowerCommand {
+        public string DisplayName { get; } = "Toggle Origins";
+        public string ShortDesc { get; } = "Toggle the Internal Origin, Project Base Point, and Survey Point visibility in the active view";
         public bool RibbonIncludeFlag { get; } = true;
         public Result Execute(
           ExternalCommandData commandData,
@@ -28,22 +28,29 @@ namespace PowerBuilder.Commands
             Document doc = uidoc.Document;
 
             Autodesk.Revit.DB.View activeView = doc.ActiveView;
-            ElementId sectionBoxCategoryId = new ElementId(BuiltInCategory.OST_SectionBox);
-            
-            //check if you can
-            //change the visibility
-            if (activeView.IsCategoryOverridable(sectionBoxCategoryId)) {
-                using (Transaction T = new Transaction(doc)) {
-                    if (T.Start("toggle-section-box") == TransactionStatus.Started) {
+            List<BuiltInCategory> cats = new List<BuiltInCategory> {
+                BuiltInCategory.OST_CoordinateSystem,
+                BuiltInCategory.OST_ProjectBasePoint,
+                BuiltInCategory.OST_SitePoint,
+                BuiltInCategory.OST_SharedBasePoint};
 
-                        ViewUtils.ToggleCategoryVisibility(sectionBoxCategoryId, activeView);
-                        T.Commit();
+            List<ElementId> targets = cats.Select(x => new ElementId(x)).ToList();
+
+            //so there is a question of if the visibility states are not the same.
+            using (Transaction T = new Transaction(doc)) {
+                if (T.Start("toggle-origins") == TransactionStatus.Started) {
+                    foreach(ElementId eid in targets) {
+                        ViewUtils.ToggleCategoryVisibility(eid, activeView);
                     }
-                    else {
-                        T.RollBack();
-                    }
+                    T.Commit();
+                }
+                else {
+                    T.RollBack();
                 }
             }
+            //check if you can
+            //change the visibility
+            
             
             return Result.Succeeded;
         }
@@ -51,4 +58,5 @@ namespace PowerBuilder.Commands
             throw new NotImplementedException("Method not used");
         }
     }
+
 }
