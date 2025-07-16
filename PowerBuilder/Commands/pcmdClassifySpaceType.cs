@@ -44,7 +44,7 @@ namespace PowerBuilder.Commands
                 new FilteredElementCollector(doc)
                 .OfClass(typeof(HVACLoadSpaceType))
                 .ToElements()
-                .ToDictionary(x => Convert.ToString(x.Id.Value), x => x.Name));
+                .ToDictionary(x => Convert.ToString(x.Id.ToString()), x => x.Name));
             ElementClassifier SpaceClassifier = new ElementClassifier(spaceTypeDefs);
 
             Selection sel = uidoc.Selection;
