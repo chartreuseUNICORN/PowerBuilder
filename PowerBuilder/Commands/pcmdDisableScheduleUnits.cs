@@ -4,6 +4,7 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+using PowerBuilder.Infrastructure;
 using PowerBuilder.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -14,12 +15,12 @@ using System.Diagnostics;
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdDisableScheduleUnits : IPowerCommand {
-        public string DisplayName { get; } = "Disable Schedule Units";
-        public string ShortDesc { get; } = "Set all numeric Schedule Fields to use the ForgeTypeId <empty>";
-        public bool RibbonIncludeFlag { get; } = true;
+    public class pcmdDisableScheduleUnits : CmdBase{
+        public override string DisplayName { get; } = "Disable Schedule Units";
+        public override string ShortDesc { get; } = "Set all numeric Schedule Fields to use the ForgeTypeId <empty>";
+        public override bool RibbonIncludeFlag { get; set; } = true;
         private Document _doc;
-        public Result Execute(
+        public override Result Execute(
           ExternalCommandData commandData,
           ref string message,
           ElementSet elements)
@@ -49,7 +50,7 @@ namespace PowerBuilder.Commands
 
             return Result.Succeeded;
         }
-        public PowerDialogResult GetInput(UIApplication uiapp) {
+        public override PowerDialogResult GetInput(UIApplication uiapp) {
             PowerDialogResult res = new PowerDialogResult();
 
             UIDocument uidoc = uiapp.ActiveUIDocument;

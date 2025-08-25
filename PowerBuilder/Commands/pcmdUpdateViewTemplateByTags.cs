@@ -10,18 +10,19 @@ using Autodesk.Revit.Attributes;
 using Nice3point.Revit.Extensions;
 using PowerBuilder.Extensions;
 using PowerBuilder.Interfaces;
+using PowerBuilder.Infrastructure;
 
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdUpdateViewTemplatesByVTsequence : IPowerCommand {
-        public string DisplayName { get; } = "Update View Templates by Layer";
-        public string ShortDesc { get; } = "Sets view accessible view properties according to Templates listed in the parameter \"TemplateLayers\" to each view template." +
+    public class pcmdUpdateViewTemplatesByVTsequence : CmdBase{
+        public override string DisplayName { get; } = "Update View Templates by Layer";
+        public override string ShortDesc { get; } = "Sets view accessible view properties according to Templates listed in the parameter \"TemplateLayers\" to each view template." +
             "Graphic Overrides from all Layered Templates are combined." +
             "\nUnmodifiable options:\n" +
             "\tShadows\n\tLighting\n\tPhotographic Exposure\n\n" +
             "Control these independently in the View Template's settings. They are unchanged by this procedure.";
-        public bool RibbonIncludeFlag { get; } = false;
+        public override bool RibbonIncludeFlag { get; set; } = false;
         //TODO: manage control parameter and RibbonIncludeFlag as part of startup
         /* There are special cases that need to be considered
              *      Overrides: manipulate these using the Get and Set methods
@@ -59,7 +60,7 @@ namespace PowerBuilder.Commands
                 BuiltInParameter.VIS_GRAPHICS_FILTERS,
             };
         private static Definition _controlParam;
-        public Result Execute(
+        public override Result Execute(
           ExternalCommandData commandData,
           ref string message,
           ElementSet elements) {
@@ -98,7 +99,7 @@ namespace PowerBuilder.Commands
             }
             return Result.Succeeded;
         }
-        public PowerDialogResult GetInput(UIApplication uiapp) {
+        public override PowerDialogResult GetInput(UIApplication uiapp) {
             throw new NotImplementedException("method not used");
         }
         /// <summary>

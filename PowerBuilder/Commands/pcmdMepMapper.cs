@@ -6,6 +6,7 @@ using Autodesk.Revit.DB.Mechanical;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using Microsoft.Msagl.Drawing;
+using PowerBuilder.Infrastructure;
 using PowerBuilder.Interfaces;
 using PowerBuilder.SelectionFilter;
 using PowerBuilder.Utils;
@@ -22,11 +23,11 @@ using System.Runtime.CompilerServices;
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdMepMapper : IPowerCommand {
-        public string DisplayName { get; } = "MEP Map";
-        public string ShortDesc { get; } = "Produce a system graphic for based on the selection.";
-        public bool RibbonIncludeFlag { get; } = true;
-        public Result Execute(
+    public class pcmdMepMapper : CmdBase{
+        public override string DisplayName { get; } = "MEP Map";
+        public override string ShortDesc { get; } = "Produce a system graphic for based on the selection.";
+        public override bool RibbonIncludeFlag { get; set; } = true;
+        public override Result Execute(
           ExternalCommandData commandData,
           ref string message,
           ElementSet elements)
@@ -46,7 +47,7 @@ namespace PowerBuilder.Commands
 
             return Result.Succeeded;
         }
-        public PowerDialogResult GetInput(UIApplication uiapp) {
+        public override PowerDialogResult GetInput(UIApplication uiapp) {
             UIDocument uidoc = uiapp.ActiveUIDocument;
             PowerDialogResult res = new PowerDialogResult();
             Selection sel = uidoc.Selection;

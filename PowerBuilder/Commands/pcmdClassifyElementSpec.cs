@@ -16,18 +16,18 @@ using System.Diagnostics;
 using System.Text.Json.Serialization;
 using PowerBuilder.Objects;
 using System.Text.Json;
-using PowerBuilder.Services;
+using PowerBuilder.Infrastructure;
 
 #endregion
 
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdClassifyElementSpec : IPowerCommand {
-        public string DisplayName { get; } = "Classify Element Specification";
-        public string ShortDesc { get; } = "Connect with Claude to report estimated Element Clasification";
-        public bool RibbonIncludeFlag { get; } = true;
-        public Result Execute(
+    public class pcmdClassifyElementSpec : CmdBase {
+        public override string DisplayName { get; } = "Classify Element Specification";
+        public override string ShortDesc { get; } = "Connect with Claude to report estimated Element Clasification";
+        public override bool RibbonIncludeFlag { get; set; } = true;
+        public override Result Execute(
           ExternalCommandData commandData,
           ref string message,
           ElementSet elements)
@@ -65,7 +65,7 @@ namespace PowerBuilder.Commands
 
             return Result.Succeeded;
         }
-        public PowerDialogResult GetInput(UIApplication uiapp) {
+        public override PowerDialogResult GetInput(UIApplication uiapp) {
             throw new NotImplementedException("No input collection required");
         }
     }

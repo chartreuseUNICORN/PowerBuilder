@@ -11,17 +11,18 @@ using System.Linq;
 using PowerBuilderUI.Forms;
 using PowerBuilderUI;
 using PowerBuilder.Interfaces;
+using PowerBuilder.Infrastructure;
 
 #endregion
 
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdSelectiveTransfer : IPowerCommand {
-        public string DisplayName { get; } = "Selective Transfer";
-        public string ShortDesc { get; } = "Select Element Types to copy from the source document to the target document";
-        public bool RibbonIncludeFlag { get; } = true;
-        public Result Execute(
+    public class pcmdSelectiveTransfer : CmdBase{
+        public override string DisplayName { get; } = "Selective Transfer";
+        public override string ShortDesc { get; } = "Select Element Types to copy from the source document to the target document";
+        public override bool RibbonIncludeFlag { get; set; } = true;
+        public override Result Execute(
           ExternalCommandData commandData,
           ref string message,
           ElementSet elements)
@@ -38,7 +39,7 @@ namespace PowerBuilder.Commands
 
             return Result.Succeeded;
         }
-        public PowerDialogResult GetInput(UIApplication uiapp) {
+        public override PowerDialogResult GetInput(UIApplication uiapp) {
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
             // In the other one, i called the active doc_tar and the others doc_src

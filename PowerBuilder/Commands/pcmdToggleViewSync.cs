@@ -5,6 +5,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Events;
 using Autodesk.Revit.UI.Selection;
+using PowerBuilder.Infrastructure;
 using PowerBuilder.Interfaces;
 using PowerBuilder.Services;
 using Serilog;
@@ -17,11 +18,11 @@ using System.Diagnostics;
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdToggleViewSync : IPowerCommand {
-        public string DisplayName { get; } = "Toggle View Sync";
-        public string ShortDesc { get; } = "Active View Synchronization";
-        public bool RibbonIncludeFlag { get; } = true;
-        public Result Execute(
+    public class pcmdToggleViewSync : CmdBase{
+        public override string DisplayName { get; } = "Toggle View Sync";
+        public override string ShortDesc { get; } = "Active View Synchronization";
+        public override bool RibbonIncludeFlag { get; set; } = true;
+        public override Result Execute(
           ExternalCommandData commandData,
           ref string message,
           ElementSet elements)
@@ -45,7 +46,7 @@ namespace PowerBuilder.Commands
             Log.Information("Vss State change {initial} -> {final}", VssInitial, Vss.Status);
                 return Result.Succeeded;
         }
-        public PowerDialogResult GetInput(UIApplication uiapp) {
+        public override PowerDialogResult GetInput(UIApplication uiapp) {
             throw new NotImplementedException("No input collection required");
         }
     }

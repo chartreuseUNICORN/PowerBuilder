@@ -10,15 +10,16 @@ using static UIFramework.Widget.CustomControls.NativeMethods;
 using Autodesk.Revit.Attributes;
 using PowerBuilder.Interfaces;
 using PowerBuilder.Utils;
+using PowerBuilder.Infrastructure;
 
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdToggleSectionBox : IPowerCommand {
-        public string DisplayName { get; } = "Toggle Section Box";
-        public string ShortDesc { get; } = "Toggle the Section Box visibility in the active view";
-        public bool RibbonIncludeFlag { get; } = true;
-        public Result Execute(
+    public class pcmdToggleSectionBox : CmdBase{
+        public override string DisplayName { get; } = "Toggle Section Box";
+        public override string ShortDesc { get; } = "Toggle the Section Box visibility in the active view";
+        public override bool RibbonIncludeFlag { get; set; } = true;
+        public override Result Execute(
           ExternalCommandData commandData,
           ref string message,
           ElementSet elements) {
@@ -47,7 +48,7 @@ namespace PowerBuilder.Commands
             
             return Result.Succeeded;
         }
-        public PowerDialogResult GetInput (UIApplication uiapp) {
+        public override PowerDialogResult GetInput (UIApplication uiapp) {
             throw new NotImplementedException("Method not used");
         }
     }

@@ -9,7 +9,11 @@ namespace PowerBuilder.Interfaces
 {
     /// <summary>
     /// Interface for implementing PowerBuilder commands
+    /// 
+    /// DEPRECATED. Create new commands from CmdBase
+    /// 
     /// </summary>
+    
     public interface IPowerCommand : IExternalCommand
     {
         string _displayName { get; }
