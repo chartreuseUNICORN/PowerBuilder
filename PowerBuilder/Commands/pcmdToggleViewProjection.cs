@@ -9,15 +9,16 @@ using System.Threading.Tasks;
 using static UIFramework.Widget.CustomControls.NativeMethods;
 using Autodesk.Revit.Attributes;
 using PowerBuilder.Interfaces;
+using PowerBuilder.Infrastructure;
 
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdToggleViewProjection : IPowerCommand {
-        public string DisplayName { get; } = "Toggle View Projection";
-        public string ShortDesc { get; } = "Toggle the View Projection state in the active view";
-        public bool RibbonIncludeFlag { get; } = true;
-        public Result Execute(
+    public class pcmdToggleViewProjection : CmdBase{
+        public override string DisplayName { get; } = "Toggle View Projection";
+        public override string ShortDesc { get; } = "Toggle the View Projection state in the active view";
+        public override bool RibbonIncludeFlag { get; set; } = true;
+        public override Result Execute(
           ExternalCommandData commandData,
           ref string message,
           ElementSet elements) {
@@ -48,7 +49,7 @@ namespace PowerBuilder.Commands
             }
             
         }
-        public PowerDialogResult GetInput (UIApplication uiapp) {
+        public override PowerDialogResult GetInput (UIApplication uiapp) {
             throw new NotImplementedException("Method not used");
         }
     }

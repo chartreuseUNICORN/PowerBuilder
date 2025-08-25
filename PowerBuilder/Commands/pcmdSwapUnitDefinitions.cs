@@ -5,6 +5,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using PowerBuilder.Extensions;
+using PowerBuilder.Infrastructure;
 using PowerBuilder.Interfaces;
 using Serilog;
 using System;
@@ -18,11 +19,11 @@ using System.Xml;
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdSwapUnitDefinitions : IPowerCommand {
-        public string DisplayName { get; } = "Swap Unit Specifications";
-        public string ShortDesc { get; } = "Write current Unit Specification and load cached Unit Specification";
-        public bool RibbonIncludeFlag { get; } = true;
-        public Result Execute(
+    public class pcmdSwapUnitDefinitions : CmdBase{
+        public override string DisplayName { get; } = "Swap Unit Specifications";
+        public override string ShortDesc { get; } = "Write current Unit Specification and load cached Unit Specification";
+        public override bool RibbonIncludeFlag { get; set; } = true;
+        public override Result Execute(
           ExternalCommandData commandData,
           ref string message,
           ElementSet elements)
@@ -75,7 +76,7 @@ namespace PowerBuilder.Commands
 
             return Result.Succeeded;
         }
-        public PowerDialogResult GetInput(UIApplication uiapp) {
+        public override PowerDialogResult GetInput(UIApplication uiapp) {
             throw new NotImplementedException("No input collection required");
         }
 

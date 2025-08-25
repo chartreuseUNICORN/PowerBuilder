@@ -11,19 +11,20 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using PowerBuilder.Interfaces;
 using PowerBuilder.SelectionFilter;
+using PowerBuilder.Infrastructure;
 
 namespace PowerBuilder.Commands
 {
 
 
     [Transaction(TransactionMode.Manual)]
-    public class pcmdTextUnion : IPowerCommand {
-        public string DisplayName { get; } = "Text Union";
-        public string ShortDesc { get; } =  "Concatenate TextNote contents into one TextNote";
-        public bool RibbonIncludeFlag { get; } = true;
+    public class pcmdTextUnion : CmdBase{
+        public override string DisplayName { get; } = "Text Union";
+        public override string ShortDesc { get; } =  "Concatenate TextNote contents into one TextNote";
+        public override bool RibbonIncludeFlag { get; set; } = true;
 
         
-        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements) {
+        public override Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements) {
             UIApplication uiapp = commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
@@ -36,7 +37,7 @@ namespace PowerBuilder.Commands
 
             return Result.Succeeded;
         }
-        public PowerDialogResult GetInput(UIApplication uiapp) {
+        public override PowerDialogResult GetInput(UIApplication uiapp) {
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Document doc = uidoc.Document;
             

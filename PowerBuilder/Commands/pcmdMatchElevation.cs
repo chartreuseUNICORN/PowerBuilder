@@ -10,16 +10,17 @@ using System.Threading.Tasks;
 using PowerBuilder.SelectionFilter;
 using PowerBuilder.Extensions;
 using Nice3point.Revit.Extensions;
+using PowerBuilder.Infrastructure;
 
 namespace PowerBuilder.Commands {
 
     [Transaction(TransactionMode.Manual)]
-    internal class pcmdMatchElevation : IPowerCommand {
-        public string DisplayName { get; } = "Match Service Elevation";
-        public string ShortDesc { get; } = "Set a target service element elevation match the source element elevation";
-        public bool RibbonIncludeFlag { get; } = true;
+    internal class pcmdMatchElevation : CmdBase{
+        public override string DisplayName { get; } = "Match Service Elevation";
+        public override string ShortDesc { get; } = "Set a target service element elevation match the source element elevation";
+        public override bool RibbonIncludeFlag { get; set; } = true;
 
-        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements) {
+        public override Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements) {
             UIApplication uiapp = commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
@@ -49,7 +50,7 @@ namespace PowerBuilder.Commands {
             return Result.Succeeded;
         }
 
-        public PowerDialogResult GetInput(UIApplication uiapp) {
+        public override PowerDialogResult GetInput(UIApplication uiapp) {
             PowerDialogResult res = new PowerDialogResult();
             UIDocument uidoc = uiapp.ActiveUIDocument;
 

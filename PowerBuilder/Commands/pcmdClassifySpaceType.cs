@@ -9,6 +9,7 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using PowerBuilder.Claude;
 using PowerBuilder.Extensions;
+using PowerBuilder.Infrastructure;
 using PowerBuilder.Interfaces;
 using PowerBuilder.Objects;
 using PowerBuilder.SelectionFilter;
@@ -26,11 +27,11 @@ using System.Text.Json.Serialization;
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdClassifySpaceType : IPowerCommand {
-        public string DisplayName { get; } = "Classify Space";
-        public string ShortDesc { get; } = "Connect with Claude to Classify the Space Type";
-        public bool RibbonIncludeFlag { get; } = true;
-        public Result Execute(
+    public class pcmdClassifySpaceType : CmdBase{
+        public override string DisplayName { get; } = "Classify Space";
+        public override string ShortDesc { get; } = "Connect with Claude to Classify the Space Type";
+        public override bool RibbonIncludeFlag { get; set; } = true;
+        public override Result Execute(
           ExternalCommandData commandData,
           ref string message,
           ElementSet elements)
@@ -72,7 +73,7 @@ namespace PowerBuilder.Commands
 
             return Result.Succeeded;
         }
-        public PowerDialogResult GetInput(UIApplication uiapp) {
+        public override PowerDialogResult GetInput(UIApplication uiapp) {
             throw new NotImplementedException("No input collection required");
         }
     }

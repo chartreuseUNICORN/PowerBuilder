@@ -11,15 +11,16 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
 using PowerBuilderUI;
 using PowerBuilder.Interfaces;
 using Serilog;
+using PowerBuilder.Infrastructure;
 
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdDependencyMapper : IPowerCommand{
-        public string DisplayName { get; } = "Dependency Mapper";
-        public string ShortDesc { get; } = "Graphically Display the element dependency of a selected Element or Type";
-        public bool RibbonIncludeFlag { get; } = true;
-        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements) {
+    public class pcmdDependencyMapper : CmdBase{
+        public override string DisplayName { get; } = "Dependency Mapper";
+        public override string ShortDesc { get; } = "Graphically Display the element dependency of a selected Element or Type";
+        public override bool RibbonIncludeFlag { get; set; } = true;
+        public override Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements) {
             UIApplication uiapp = commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
@@ -38,7 +39,7 @@ namespace PowerBuilder.Commands
             
             return Result.Succeeded;
         }
-        public PowerDialogResult GetInput(UIApplication uiapp) {
+        public override PowerDialogResult GetInput(UIApplication uiapp) {
             // so how does this actually want to work. This is usually type based, except for classes that don't have types
             // line styles
             // text styles

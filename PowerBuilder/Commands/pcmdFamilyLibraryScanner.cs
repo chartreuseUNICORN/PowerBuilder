@@ -13,17 +13,18 @@ using System.Xml;
 using System.Linq;
 using Autodesk.Revit.DB.ExtensibleStorage;
 using System.Windows.Forms;
+using PowerBuilder.Infrastructure;
 
 #endregion
 
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdFamilyLibraryScanner : IPowerCommand {
-        public string DisplayName { get; } = "Family Library Scanner";
-        public string ShortDesc { get; } = "Select a directory to scan and produce a report with family name, size, authoring version, and category";
-        public bool RibbonIncludeFlag { get; } = true;
-        public Result Execute(
+    public class pcmdFamilyLibraryScanner : CmdBase{
+        public override string DisplayName { get; } = "Family Library Scanner";
+        public override string ShortDesc { get; } = "Select a directory to scan and produce a report with family name, size, authoring version, and category";
+        public override bool RibbonIncludeFlag { get; set; } = true;
+        public override Result Execute(
           ExternalCommandData commandData,
           ref string message,
           ElementSet elements)
@@ -43,7 +44,7 @@ namespace PowerBuilder.Commands
 
             return Result.Succeeded;
         }
-        public PowerDialogResult GetInput(UIApplication uiapp) {
+        public override PowerDialogResult GetInput(UIApplication uiapp) {
             PowerDialogResult res = new PowerDialogResult();
             
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();

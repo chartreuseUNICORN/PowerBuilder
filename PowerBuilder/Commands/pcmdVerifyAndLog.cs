@@ -5,6 +5,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+using PowerBuilder.Infrastructure;
 using PowerBuilder.Interfaces;
 using PowerBuilder.SelectionFilter;
 using PowerBuilder.Utils;
@@ -24,11 +25,11 @@ using System.Windows.Forms;
 namespace PowerBuilder.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdVerifyAndLog : IPowerCommand {
-        public string DisplayName { get; } = "Verify and Log";
-        public string ShortDesc { get; } = "Mark verification parameter, Pin, and produce work log for selected elements";
-        public bool RibbonIncludeFlag { get; } = true;
-        public Result Execute(
+    public class pcmdVerifyAndLog : CmdBase{
+        public override string DisplayName { get; } = "Verify and Log";
+        public override string ShortDesc { get; } = "Mark verification parameter, Pin, and produce work log for selected elements";
+        public override bool RibbonIncludeFlag { get; set; } = true;
+        public override Result Execute(
           ExternalCommandData commandData,
           ref string message,
           ElementSet elements) {
@@ -59,7 +60,7 @@ namespace PowerBuilder.Commands
         /// </summary>
         /// <param name="uiapp"></param>
         /// <returns></returns>
-        public PowerDialogResult GetInput(UIApplication uiapp) {
+        public override PowerDialogResult GetInput(UIApplication uiapp) {
 
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Document doc = uidoc.Document;

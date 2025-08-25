@@ -8,14 +8,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.UI.Selection;
+using PowerBuilder.Infrastructure;
 
 namespace PowerBuilder.Commands {
     [Transaction(TransactionMode.Manual)]
-    internal class pcmdVectorMeasure: IPowerCommand {
-        public string DisplayName { get; } = "Vector Measure";
-        public string ShortDesc { get; } = "Display vector components from Start Point to End Point";
-        public bool RibbonIncludeFlag { get; } = true;
-        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements) {
+    internal class pcmdVectorMeasure: CmdBase{
+        public override string DisplayName { get; } = "Vector Measure";
+        public override string ShortDesc { get; } = "Display vector components from Start Point to End Point";
+        public override bool RibbonIncludeFlag { get; set; } = true;
+        public override Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements) {
             
             UIApplication uiapp = commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
@@ -37,7 +38,7 @@ namespace PowerBuilder.Commands {
             return Result.Succeeded;
         }
 
-        public PowerDialogResult GetInput(UIApplication uiapp) {
+        public override PowerDialogResult GetInput(UIApplication uiapp) {
             
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Document doc = uidoc.Document;

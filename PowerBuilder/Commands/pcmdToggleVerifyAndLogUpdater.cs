@@ -8,19 +8,20 @@ using Autodesk.Revit.UI;
 using PowerBuilder.Interfaces;
 using PowerBuilder.Extensions;
 using Autodesk.Revit.Attributes;
+using PowerBuilder.Infrastructure;
 
 namespace PowerBuilder.Commands {
     [Transaction(TransactionMode.Manual)]
-    public class pcmdToggleVerifyAndLogUpdater : IPowerCommand {
+    public class pcmdToggleVerifyAndLogUpdater : CmdBase{
 
-        public string DisplayName { get; } = "Toggle VerifyAndLog Updater";
-        public string ShortDesc { get; } = $"Toggle VerifyAndLog utility state.";
-        public bool RibbonIncludeFlag { get; } = true;
+        public override string DisplayName { get; } = "Toggle VerifyAndLog Updater";
+        public override string ShortDesc { get; } = $"Toggle VerifyAndLog utility state.";
+        public override bool RibbonIncludeFlag { get; set; } = true;
 
         private Guid _TargetUIpdaterId = new  Guid( "4D7EC7FB-A211-44B9-8F0B-5BA675475F81");
         private bool _IsInitialRun = false;
 
-        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements) {
+        public override Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements) {
             
             UIApplication uiapp = commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
@@ -53,7 +54,7 @@ namespace PowerBuilder.Commands {
 
             return Result.Succeeded;
         }
-        public PowerDialogResult GetInput(UIApplication uiapp) {
+        public override PowerDialogResult GetInput(UIApplication uiapp) {
             throw new NotImplementedException("No input collection required");
         }
 
