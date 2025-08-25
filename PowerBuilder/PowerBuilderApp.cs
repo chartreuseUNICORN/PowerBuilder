@@ -15,6 +15,9 @@ using PowerBuilder.Extensions;
 using Autodesk.Revit.DB.Events;
 using PowerBuilder.Services;
 using Serilog;
+using Microsoft.Extensions.Logging.Abstractions;
+using PowerBuilder.Commands;
+using PowerBuilder.Infrastructure;
 
 #endregion
 
@@ -47,28 +50,24 @@ namespace PowerBuilder
             Log.Debug("INITIALIZE SINGLETONS");
             string ApiKey = GetApiKeyFromConfig();
             ViewSynchronizationService Vss = ViewSynchronizationService.Instance;
-            ClaudeConnector.Initialize(ApiKey);
-            string checkClaude = ClaudeConnector.Instance.Client.GetTextResponseAsync("Claude can you receive this message").Result;
-            Log.Debug(checkClaude);
-            #endregion
+            CmdRegistry Cmdr = CmdRegistry.Instance;
+            Cmdr.InitializeRegistry();
 
-            #region Assemble Ribbon Components
-            Log.Debug("ASSEMBLE RIBBON COMPONENTS");
-            RibbonPanel ribbonPanel = a.CreateRibbonPanel("PowerBuilder");
-            PulldownButtonData pullDownData = new PulldownButtonData("pldbPBCommands", "Power Tools");
-            PulldownButton pullDownButton = ribbonPanel.AddItem(pullDownData) as PulldownButton;
-
-            //Collect Commands and compose into RibbonItems
-            //TODO: port this over to its own class RibbonBuilder or something
-            string thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
-            Debug.WriteLine($"PATH: {thisAssemblyPath}");
-            List<(string fullName, string displayName, string shortDesc)> commArgs = GetCommandClasses("PowerBuilder").OrderBy(x => x.displayName).ToList();
-            for (int i = 0; i < commArgs.Count; i++) {
-                Debug.WriteLine($"DisplayName: {commArgs[i].displayName}\t\t\tFullName {commArgs[i].fullName}");
-                PushButtonData CurrentPushButton = new PushButtonData($"PBCOM{i}", commArgs[i].displayName, thisAssemblyPath, commArgs[i].fullName);
-                CurrentPushButton.ToolTip = commArgs[i].shortDesc;
-                pullDownButton.AddPushButton(CurrentPushButton);
+            if (ApiKey != null) {
+                ClaudeConnector.Initialize(ApiKey);
+                string checkClaude = ClaudeConnector.Instance.Client.GetTextResponseAsync("Claude can you receive this message").Result;
+                Log.Debug(checkClaude);
             }
+            else {
+                Cmdr.UnregisterCmd(typeof(pcmdClassifyElementSpec));
+                Cmdr.UnregisterCmd(typeof(pcmdClassifySpaceType));
+            }
+
+            #endregion
+            Log.Debug("COMPOSE RIBBON");
+            Cmdr.ComposeRibbon(a);
+            #region Assemble Ribbon Components
+            
             #endregion
 
             #region Register Dynamic Model Updates
@@ -166,24 +165,7 @@ namespace PowerBuilder
             }
             UIThemeManager.CurrentTheme = SetTheme;
         }
-        private List<(string fullName,string displayName, string tooltip)> GetCommandClasses(string sNameSpace) {
-
-            Assembly asm = Assembly.GetExecutingAssembly();
-            var commandTypes = asm.GetTypes().Where(t => typeof(IExternalCommand).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
-            List<(string fullName, string displayName, string tooltip)> CommandData = new List<(string fullName, string displayName, string tooltip)>();
-            
-            foreach (System.Type Command in commandTypes) {
-                object instance = Activator.CreateInstance(Command);
-                
-                if ((bool)Command.GetProperty("RibbonIncludeFlag").GetValue(instance)) {
-                    CommandData.Add((Command.FullName,
-                    Command.GetProperty("DisplayName")?.GetValue(instance) as string ?? Command.Name,
-                    Command.GetProperty("ShortDesc")?.GetValue(instance) as string ?? "")
-                    );
-                }
-            }
-            return CommandData;
-        }
+        
         private string GetApiKeyFromConfig() {
             // Option 1: From environment variable (recommended)
             string apiKey = Environment.GetEnvironmentVariable("CLAUDE_API_KEY", EnvironmentVariableTarget.User);

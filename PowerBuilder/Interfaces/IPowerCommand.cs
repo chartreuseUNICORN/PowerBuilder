@@ -12,9 +12,9 @@ namespace PowerBuilder.Interfaces
     /// </summary>
     public interface IPowerCommand : IExternalCommand
     {
-        abstract string DisplayName { get; }
-        abstract string ShortDesc { get; }
-        abstract bool RibbonIncludeFlag { get; }
+        string _displayName { get; }
+        string ShortDesc { get; }
+        bool RibbonIncludeFlag { get; }
 
         ///<summary>
         /// User interaction should always be separated from command function.  Place the call for the Form here, or trigger Revit Selection UI
