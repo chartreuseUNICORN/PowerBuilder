@@ -76,16 +76,18 @@ namespace PowerBuilder
              * TODO: use reflection to register updaters and events from base class DocumentScopeUpdater
              */
             Log.Debug("REGISTER UPDATERS");
-            VerifyAndLogUpdater VaLUpdater = new VerifyAndLogUpdater(a.ActiveAddInId);
+            //VerifyAndLogUpdater VaLUpdater = new VerifyAndLogUpdater(a.ActiveAddInId);
             SpaceUpdater SpaceDms = new SpaceUpdater(a.ActiveAddInId);
-            ParameterLinkUpdater ParameterLinkUpdater = new ParameterLinkUpdater(a.ActiveAddInId);
+            //ParameterLinkUpdater ParameterLinkUpdater = new ParameterLinkUpdater(a.ActiveAddInId);
             SystemNameUpdater SystemNameUpdater = new SystemNameUpdater(a.ActiveAddInId);
             ControlSystemUpdater ControlSystemUpdater = new ControlSystemUpdater(a.ActiveAddInId);
 
+            
+
             //register updaters
-            UpdaterRegistry.RegisterUpdater(VaLUpdater);
+            //UpdaterRegistry.RegisterUpdater(VaLUpdater);
             UpdaterRegistry.RegisterUpdater(SpaceDms);
-            UpdaterRegistry.RegisterUpdater(ParameterLinkUpdater);
+            //UpdaterRegistry.RegisterUpdater(ParameterLinkUpdater);
             UpdaterRegistry.RegisterUpdater(SystemNameUpdater);
             UpdaterRegistry.RegisterUpdater(ControlSystemUpdater);
             #endregion
@@ -93,13 +95,13 @@ namespace PowerBuilder
             #region Register Event Handlers
             Log.Debug("REGISTER EVENT HANDLERS");
             try {
-                a.ControlledApplication.DocumentOpened += new EventHandler<DocumentOpenedEventArgs>(VaLUpdater.updater_OnDocumentOpened);
+                //a.ControlledApplication.DocumentOpened += new EventHandler<DocumentOpenedEventArgs>(VaLUpdater.updater_OnDocumentOpened);
                 a.ControlledApplication.DocumentOpened += new EventHandler<DocumentOpenedEventArgs>(SpaceDms.updater_OnDocumentOpened);
                 //a.ControlledApplication.DocumentOpened += new EventHandler<DocumentOpenedEventArgs>(ParameterLinkUpdater.updater_OnDocumentOpened);
                 a.ControlledApplication.DocumentOpened += new EventHandler<DocumentOpenedEventArgs>(SystemNameUpdater.updater_OnDocumentOpened);
                 a.ControlledApplication.DocumentOpened += new EventHandler<DocumentOpenedEventArgs>(ControlSystemUpdater.updater_OnDocumentOpened);
 
-                a.ControlledApplication.DocumentClosing += new EventHandler<DocumentClosingEventArgs>(VaLUpdater.updater_OnDocumentClosing);
+                //a.ControlledApplication.DocumentClosing += new EventHandler<DocumentClosingEventArgs>(VaLUpdater.updater_OnDocumentClosing);
                 a.ControlledApplication.DocumentClosing += new EventHandler<DocumentClosingEventArgs>(SpaceDms.updater_OnDocumentClosing);
                 //a.ControlledApplication.DocumentClosing += new EventHandler<DocumentClosingEventArgs>(ParameterLinkUpdater.updater_OnDocumentClosing);
                 a.ControlledApplication.DocumentClosing += new EventHandler<DocumentClosingEventArgs>(SystemNameUpdater.updater_OnDocumentClosing);
@@ -125,13 +127,13 @@ namespace PowerBuilder
             ControlSystemUpdater ControlSystemUpdater = new ControlSystemUpdater(a.ActiveAddInId);
             
             #region Unregister Event Handlers
-            a.ControlledApplication.DocumentOpened -= VaLUpdater.updater_OnDocumentOpened;
+           // a.ControlledApplication.DocumentOpened -= VaLUpdater.updater_OnDocumentOpened;
             a.ControlledApplication.DocumentOpened -= SpaceDms.updater_OnDocumentOpened;
             //a.ControlledApplication.DocumentOpened -= ParameterLinkUpdater.updater_OnDocumentOpened;
             a.ControlledApplication.DocumentOpened -= SystemNameUpdater.updater_OnDocumentOpened;
             a.ControlledApplication.DocumentOpened -= ControlSystemUpdater.updater_OnDocumentOpened;
 
-            a.ControlledApplication.DocumentClosing-= VaLUpdater.updater_OnDocumentClosing;
+            //a.ControlledApplication.DocumentClosing-= VaLUpdater.updater_OnDocumentClosing;
             a.ControlledApplication.DocumentClosing -= SpaceDms.updater_OnDocumentClosing;
             //a.ControlledApplication.DocumentClosing -= ParameterLinkUpdater.updater_OnDocumentClosing;
             a.ControlledApplication.DocumentClosing -= SystemNameUpdater.updater_OnDocumentClosing;
@@ -143,10 +145,11 @@ namespace PowerBuilder
             #endregion
 
             #region Unregister Dynamic Model Updates
-            UpdaterRegistry.UnregisterUpdater(VaLUpdater.GetUpdaterId());
+            //UpdaterRegistry.UnregisterUpdater(VaLUpdater.GetUpdaterId());
             UpdaterRegistry.UnregisterUpdater(SpaceDms.GetUpdaterId());
-            UpdaterRegistry.UnregisterUpdater(ParameterLinkUpdater.GetUpdaterId());
+            //UpdaterRegistry.UnregisterUpdater(ParameterLinkUpdater.GetUpdaterId());
             UpdaterRegistry.UnregisterUpdater(SystemNameUpdater.GetUpdaterId());
+            UpdaterRegistry.UnregisterUpdater(ControlSystemUpdater.GetUpdaterId());
             #endregion
 
             #region Close logger
