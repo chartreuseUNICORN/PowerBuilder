@@ -9,21 +9,22 @@ using System.Threading.Tasks;
 using Serilog;
 
 namespace PowerBuilder.IUpdaters {
-    internal class SystemNameUpdater : DocumentScopeUpdater, IUpdater {
-
-        //this can probably implement a parent abstract class "ParameterUpdater"
-        //but let's bulid this toy example first.  yeah, like this could be BoolParameterUpdater: ParameterUpdater
-        static private UpdaterId _uid;
-        static private AddInId _appId;
-        static private ChangePriority _changePriority;
-        static private ForgeTypeId _KeyParameterTypeId;
-        static bool LoadOnStartup = true; //this should be required as part of IPowerUpdater (or base class?)
+    internal class SystemNameUpdater : DocumentScopeUpdater {
+        protected override string _name => "System Name Updater";
+        protected override string _description => "Set System Name when base equipment is assigned";
+        public override bool LoadOnStartup => true;
+        private ForgeTypeId _KeyParameterTypeId;
+        
+        /// <summary>
+        /// Updater to set system names when base equipment is assigned
+        /// </summary>
+        /// <param name="id"></param>
         public SystemNameUpdater (AddInId id) {
             
-            _appId = id;
-            _uid = new UpdaterId(_appId, new Guid("3A5573A3-B5AA-4F32-BFEB-1AC801D23EDD"));
+            _addInId = id;
+            _uid = new UpdaterId(_addInId, new Guid("3A5573A3-B5AA-4F32-BFEB-1AC801D23EDD"));
         }
-        public void Execute (UpdaterData data) {
+        public override void Execute (UpdaterData data) {
             
             Document doc = data.GetDocument();
 
@@ -31,6 +32,8 @@ namespace PowerBuilder.IUpdaters {
                 MEPSystem CurrentSystem = doc.GetElement(ChangedElement) as MEPSystem;
                 Element BaseEquipment = CurrentSystem.BaseEquipment as Element;
 
+                //TODO: this needs a better way to run if the base equipment is assigned, but the Mark value is changed.
+                //TODO: also can adjust this to accept a variable EquipmentIdParameter
                 if (BaseEquipment != null) {
                     
                     Parameter Name = CurrentSystem.GetParameter(_KeyParameterTypeId);
@@ -46,23 +49,12 @@ namespace PowerBuilder.IUpdaters {
                     }
                 }
             }
-            Debug.WriteLine($"{this.GetType().Name} COMPLETE: {data.GetModifiedElementIds().Count} items changed");
+            Log.Debug($"{this.GetType().Name} COMPLETE: {data.GetModifiedElementIds().Count} items changed");
         }
-        public string GetUpdaterName() {
-            return "System Name Updater";
-        }
-        public UpdaterId GetUpdaterId() {
-            return _uid;
-        }
-        public ChangePriority GetChangePriority() {
-            return _changePriority;
-        }
-        public string GetAdditionalInformation() {
-            return "no additional information";
-        }
+        
         public override void updater_OnDocumentOpened (object sender, DocumentOpenedEventArgs args) {
-            
-            Log.Debug($"{args.Document.Title} opened");
+
+            Log.Debug($"{this.GetUpdaterName()} | document opened @ {args.Document.Title}");
             try {
                 BuiltInParameter KeyParameter = BuiltInParameter.RBS_SYSTEM_NAME_PARAM;
                 _KeyParameterTypeId = ParameterUtils.GetParameterTypeId(KeyParameter);
@@ -71,7 +63,7 @@ namespace PowerBuilder.IUpdaters {
                 UpdaterRegistry.AddTrigger(_uid, args.Document, ValidateElementFilter, Element.GetChangeTypeAny());
             }
             catch (Exception ex) {
-                Log.Debug($"Trigger Added");
+                Log.Error($"{this.GetUpdaterName()}: {ex.Message}");
             }
         }
     }

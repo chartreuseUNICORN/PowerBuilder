@@ -10,19 +10,23 @@ using Serilog;
 using PowerBuilder.Exceptions;
 
 namespace PowerBuilder.IUpdaters {
-    /// <summary>
-    /// IUpdater to enforce relationships between spatial data and PowerBuilder parameters
-    /// </summary>
-    public class SpaceUpdater : DocumentScopeUpdater, IUpdater {
+    public class SpaceUpdater : DocumentScopeUpdater {
 
-        static private ChangePriority _ChangePriority;
+        protected override string _name => "Space Updater";
+        protected override string _description => "Update changed spaces with custom calculations";
+        public override bool LoadOnStartup => true;
+        
         static private SpaceCalculationService _spaceCalculationService;
+        /// <summary>
+        /// Updater to enforce relationships between spatial data and PowerBuilder parameters. Currently generates airflow density, pressure balance, and distributes specified airflow over all Air Terminals in the space.
+        /// </summary>
+        /// <param name="id">AddInId</param>
         public SpaceUpdater(AddInId id)
         {
-            _appId = id;
-            _uid = new UpdaterId(_appId, new Guid("86390EF0-9246-4CFD-B5B5-E59F0ECA89D4"));
+            _addInId = id;
+            _uid = new UpdaterId(_addInId, new Guid("86390EF0-9246-4CFD-B5B5-E59F0ECA89D4"));
         }
-        public void Execute(UpdaterData data) {
+        public override void Execute(UpdaterData data) {
             Document doc = data.GetDocument();
             try {
                 SpaceCalculationService SCS = _spaceCalculationService;
@@ -39,19 +43,6 @@ namespace PowerBuilder.IUpdaters {
             catch (Exception e) {
                 Log.Error($"SpaceUpdater: {e.Message}");
             }
-        }
-        public string GetUpdaterName() {
-            return "Space Updater";
-        }
-        public UpdaterId GetUpdaterId() {
-            return _uid;
-        }
-
-        public ChangePriority GetChangePriority() {
-            return _ChangePriority;
-        }
-        public string GetAdditionalInformation() {
-            return "Manage space-airflow relationships";
         }
 
         public override void updater_OnDocumentOpened(object sender, DocumentOpenedEventArgs args) {
