@@ -10,28 +10,29 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using PowerBuilder.Infrastructure;
+using System.Runtime.InteropServices;
 
 namespace PowerBuilder.IUpdaters {
-    public class ParameterLinkUpdater : DocumentScopeUpdater, IUpdater {
+    
+    public class ParameterLinkUpdater : DocumentScopeUpdater {
 
-        static private ChangePriority _ChangePriority;
-        static private Dictionary<ElementId, ElementId> _linkedParameters;
+        protected override string _name => "Parameter Link Updater";
+        protected override string _description => "Enforce value equality between two parameters";
+        public override bool LoadOnStartup => true;
         
+        private Dictionary<ElementId, ElementId> _linkedParameters;
+        
+        /// <summary>
+        /// Updater that enforces value equality between pairs of registered parameters
+        /// </summary>
+        /// <param name="id">AddInId</param>
         public ParameterLinkUpdater(AddInId id) {
-            _appId = id;
-            _uid = new UpdaterId(_appId, new Guid("43FDE7A2-2B2D-4EDC-B33F-5EE99435044E"));
-            
-            
+            _addInId = id;
+            _uid = new UpdaterId(_addInId, new Guid("43FDE7A2-2B2D-4EDC-B33F-5EE99435044E"));
         }
-        public void Execute(UpdaterData data) {
+        public override void Execute(UpdaterData data) {
             Document doc = data.GetDocument();
-            /*
-             * Get parameter map file using PB URL Shared Parameter from Project Information or Global Parameters
-             * get line matching watched parameter
-             * cons : cdr
-             * cdr -> list<?> this is probably Definition so it can handle BIP and ParameterElements
-             *  this Definition lookup may be more complicated than it seems
-             */
             
             foreach (ElementId eid in data.GetModifiedElementIds()) {
                 Element e = doc.GetElement(eid);
@@ -50,20 +51,6 @@ namespace PowerBuilder.IUpdaters {
                 //SinkParameter.Match(SourceParameter);
                 
             }
-            
-        }
-        public string GetUpdaterName() {
-            return $"Parameter Linker";
-        }
-        public UpdaterId GetUpdaterId() {
-            return _uid;
-        }
-
-        public ChangePriority GetChangePriority() {
-            return _ChangePriority;
-        }
-        public string GetAdditionalInformation() {
-            return "no additional information";
         }
 
         public override void updater_OnDocumentOpened(object sender, DocumentOpenedEventArgs args) {
@@ -99,11 +86,12 @@ namespace PowerBuilder.IUpdaters {
                         }
                     }
                     catch (Exception e) {
-                        Log.Debug($"WatchedSinkParameter: {kvp.Key} could not be found");
+                        Log.Error($"{this.GetUpdaterName()}: {e.Message}");
                     }
                 }
             }
-            else Log.Debug("ParameterLinkUpdater\tLinker Map parameter not found");
+            else Log.Error($"{this.GetUpdaterName()}\tLinker Map parameter not found");
+            UpdaterRegistry.DisableUpdater(_uid);
         }
 
         internal Dictionary<string,List<string>> GetParameterMapFromPath (string filepath) {

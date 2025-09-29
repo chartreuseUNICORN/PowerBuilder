@@ -15,17 +15,17 @@ namespace PowerBuilder.Infrastructure {
     /// <summary>
     /// CmdRegistry is a singleton class to track command state and related methods for composing the Ribbona
     /// </summary>
-    public sealed class CmdRegistry {
-        private static readonly CmdRegistry _instance = new CmdRegistry();
+    public sealed class CmdManager {
+        private static readonly CmdManager _instance = new CmdManager();
         private static Dictionary<string, CmdSignature> _commandRegistry = new Dictionary<string, CmdSignature>();
         //do we need to provide a static reference to the application resources? is this controller more than just the command registry?
-        static CmdRegistry() {
+        static CmdManager() {
             
         }
-        private CmdRegistry() {
+        private CmdManager() {
                      
         }
-        public static CmdRegistry Instance {
+        public static CmdManager Instance {
             get {
                 return _instance;
             }
@@ -33,6 +33,7 @@ namespace PowerBuilder.Infrastructure {
         public void ComposeRibbon(UIControlledApplication uicapp) {
             //TOOD: these concerns should be separated. this is probably fine, but this should be some other sort of deal RibbonManager
             //that contains the Ribbon manipulation logic and only gets the command registry from CmdRegistry
+            Log.Information("Compose Ribbon");
             RibbonPanel ribbonPanel = uicapp.CreateRibbonPanel("PowerBuilder");
             PulldownButtonData pullDownData = new PulldownButtonData("pldbPBCommands", "Power Tools");
             PulldownButton pullDownButton = ribbonPanel.AddItem(pullDownData) as PulldownButton;
@@ -45,7 +46,7 @@ namespace PowerBuilder.Infrastructure {
             for (int i = 0; i < _commandRegistry.Count; i++) {
                 string ir = registrySequence[i];
                 if (_commandRegistry[ir].RibbonIncludeFlag) {
-                    Debug.WriteLine($"DisplayName: {_commandRegistry[ir].DisplayName}\t\t\tFullName {_commandRegistry[ir]}");
+                    Log.Information($"DisplayName: {_commandRegistry[ir].DisplayName}\t\t\tFullName {_commandRegistry[ir]}");
                     PushButtonData CurrentPushButton = new PushButtonData($"PBCOM{i}", _commandRegistry[ir].DisplayName, thisAssemblyPath, ir);
                     CurrentPushButton.ToolTip = _commandRegistry[ir].ShortDesc;
                     pullDownButton.AddPushButton(CurrentPushButton);
@@ -54,6 +55,7 @@ namespace PowerBuilder.Infrastructure {
         }
         public void InitializeRegistry() {
 
+            Log.Information("Initialize Command Registry targeting CmdBase");
             Assembly asm = Assembly.GetExecutingAssembly();
             List<Type> commandTypes = asm.GetTypes()
                 .Where(t => typeof(CmdBase)

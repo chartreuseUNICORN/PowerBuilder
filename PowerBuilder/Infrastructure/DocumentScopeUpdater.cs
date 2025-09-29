@@ -7,18 +7,14 @@ using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 using Serilog;
+using PowerBuilder.Infrastructure;
 
 namespace PowerBuilder.IUpdaters {
-    public abstract class DocumentScopeUpdater {
-
-        protected UpdaterId _uid;
-        protected AddInId _appId;
-        protected bool LoadOnStartup;
-
-        /// <summary>
-        /// Base class for IUpdaters targeting Documents
-        /// </summary>
-
+    /// <summary>
+    /// Base class for IUpdaters targeting Documents
+    /// </summary>
+    public abstract class DocumentScopeUpdater : DmuBase {
+        
         public abstract void updater_OnDocumentOpened(object sender, DocumentOpenedEventArgs args);
         
         public virtual void updater_OnDocumentClosing (object sender, DocumentClosingEventArgs args) {
