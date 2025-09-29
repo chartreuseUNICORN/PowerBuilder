@@ -50,8 +50,11 @@ namespace PowerBuilder
             Log.Debug("INITIALIZE SINGLETONS");
             string ApiKey = GetApiKeyFromConfig();
             ViewSynchronizationService Vss = ViewSynchronizationService.Instance;
-            CmdRegistry Cmdr = CmdRegistry.Instance;
-            Cmdr.InitializeRegistry();
+            CmdManager CmdMgr = CmdManager.Instance;
+            DmuManager DmuMgr = DmuManager.Instance;
+            
+            CmdMgr.InitializeRegistry();
+
 
             if (ApiKey != null) {
                 ClaudeConnector.Initialize(ApiKey);
@@ -59,16 +62,13 @@ namespace PowerBuilder
                 Log.Debug(checkClaude);
             }
             else {
-                Cmdr.UnregisterCmd(typeof(pcmdClassifyElementSpec));
-                Cmdr.UnregisterCmd(typeof(pcmdClassifySpaceType));
+                CmdMgr.UnregisterCmd(typeof(pcmdClassifyElementSpec));
+                CmdMgr.UnregisterCmd(typeof(pcmdClassifySpaceType));
             }
 
             #endregion
             Log.Debug("COMPOSE RIBBON");
-            Cmdr.ComposeRibbon(a);
-            #region Assemble Ribbon Components
-            
-            #endregion
+            CmdMgr.ComposeRibbon(a);
 
             #region Register Dynamic Model Updates
             //initialize updaters
@@ -76,7 +76,8 @@ namespace PowerBuilder
              * TODO: use reflection to register updaters and events from base class DocumentScopeUpdater
              */
             Log.Debug("REGISTER UPDATERS");
-            //VerifyAndLogUpdater VaLUpdater = new VerifyAndLogUpdater(a.ActiveAddInId);
+            DmuMgr.RegisterUpdaters(a);
+            /*VerifyAndLogUpdater VaLUpdater = new VerifyAndLogUpdater(a.ActiveAddInId);
             SpaceUpdater SpaceDms = new SpaceUpdater(a.ActiveAddInId);
             //ParameterLinkUpdater ParameterLinkUpdater = new ParameterLinkUpdater(a.ActiveAddInId);
             SystemNameUpdater SystemNameUpdater = new SystemNameUpdater(a.ActiveAddInId);
@@ -89,12 +90,13 @@ namespace PowerBuilder
             UpdaterRegistry.RegisterUpdater(SpaceDms);
             //UpdaterRegistry.RegisterUpdater(ParameterLinkUpdater);
             UpdaterRegistry.RegisterUpdater(SystemNameUpdater);
-            UpdaterRegistry.RegisterUpdater(ControlSystemUpdater);
+            UpdaterRegistry.RegisterUpdater(ControlSystemUpdater);*/
             #endregion
 
             #region Register Event Handlers
             Log.Debug("REGISTER EVENT HANDLERS");
-            try {
+            DmuMgr.SubscribeEventHandlers(a.ControlledApplication);
+            /*try {
                 //a.ControlledApplication.DocumentOpened += new EventHandler<DocumentOpenedEventArgs>(VaLUpdater.updater_OnDocumentOpened);
                 a.ControlledApplication.DocumentOpened += new EventHandler<DocumentOpenedEventArgs>(SpaceDms.updater_OnDocumentOpened);
                 //a.ControlledApplication.DocumentOpened += new EventHandler<DocumentOpenedEventArgs>(ParameterLinkUpdater.updater_OnDocumentOpened);
@@ -111,7 +113,7 @@ namespace PowerBuilder
             catch (Exception) {
                 Log.Warning("Event Handler Registration FAILED");
                 return Result.Failed;
-            }
+            }*/
             #endregion
             Log.Debug("STARTUP COMPLETE");
             return Result.Succeeded;
@@ -120,7 +122,11 @@ namespace PowerBuilder
         {
             ViewSynchronizationService Vss = ViewSynchronizationService.Instance;
 
-            VerifyAndLogUpdater VaLUpdater = new VerifyAndLogUpdater(a.ActiveAddInId);
+            DmuManager DmuMgr = DmuManager.Instance;
+            
+            DmuMgr.UnsubscribeEventHandlers(a.ControlledApplication);
+
+            /*VerifyAndLogUpdater VaLUpdater = new VerifyAndLogUpdater(a.ActiveAddInId);
             SpaceUpdater SpaceDms = new SpaceUpdater(a.ActiveAddInId);
             ParameterLinkUpdater ParameterLinkUpdater = new ParameterLinkUpdater(a.ActiveAddInId);
             SystemNameUpdater SystemNameUpdater = new SystemNameUpdater(a.ActiveAddInId);
@@ -137,19 +143,20 @@ namespace PowerBuilder
             a.ControlledApplication.DocumentClosing -= SpaceDms.updater_OnDocumentClosing;
             //a.ControlledApplication.DocumentClosing -= ParameterLinkUpdater.updater_OnDocumentClosing;
             a.ControlledApplication.DocumentClosing -= SystemNameUpdater.updater_OnDocumentClosing;
-            a.ControlledApplication.DocumentClosing -= ControlSystemUpdater.updater_OnDocumentClosing;
+            a.ControlledApplication.DocumentClosing -= ControlSystemUpdater.updater_OnDocumentClosing;*/
 
             if (Vss.Status) {
                 a.GetUIApplication().ViewActivated -= Vss.onViewActivated;
             }
-            #endregion
 
             #region Unregister Dynamic Model Updates
+            DmuMgr.UnregisterUpdaters();
+            /*
             //UpdaterRegistry.UnregisterUpdater(VaLUpdater.GetUpdaterId());
             UpdaterRegistry.UnregisterUpdater(SpaceDms.GetUpdaterId());
             //UpdaterRegistry.UnregisterUpdater(ParameterLinkUpdater.GetUpdaterId());
             UpdaterRegistry.UnregisterUpdater(SystemNameUpdater.GetUpdaterId());
-            UpdaterRegistry.UnregisterUpdater(ControlSystemUpdater.GetUpdaterId());
+            UpdaterRegistry.UnregisterUpdater(ControlSystemUpdater.GetUpdaterId());*/
             #endregion
 
             #region Close logger
