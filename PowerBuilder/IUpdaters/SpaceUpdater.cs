@@ -27,6 +27,7 @@ namespace PowerBuilder.IUpdaters {
             _uid = new UpdaterId(_addInId, new Guid("86390EF0-9246-4CFD-B5B5-E59F0ECA89D4"));
         }
         public override void Execute(UpdaterData data) {
+            //TODO: there is an issue where this updater doesn't trigger when air terminals with 0 cfm flow are moved into the space.
             Document doc = data.GetDocument();
             try {
                 SpaceCalculationService SCS = _spaceCalculationService;

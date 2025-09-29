@@ -113,6 +113,7 @@ namespace PowerBuilder.Services {
         }
         public void SyncSpecifiedAirflowToActual(Autodesk.Revit.DB.Mechanical.Space Space)
         {
+            //TODO: there is an issue with this calculation not functioning correctly.  miscalculating to result in total airflows 5-15cfm greater
             List<FamilyInstance> AirTerminals = _AirTerminalCache[Space.Id].Where(x => x.LookupParameter("System Classification").AsValueString() == "Supply Air").ToList();
             SetRoundedAirflowToElements(Space, AirTerminals);
         }
