@@ -7,6 +7,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 using Serilog;
+using Autodesk.Revit.DB.Electrical;
 
 namespace PowerBuilder.IUpdaters {
     internal class SystemNameUpdater : DocumentScopeUpdater {
@@ -34,10 +35,12 @@ namespace PowerBuilder.IUpdaters {
 
                 //TODO: this needs a better way to run if the base equipment is assigned, but the Mark value is changed.
                 //TODO: also can adjust this to accept a variable EquipmentIdParameter
-                if (BaseEquipment != null) {
+                if (BaseEquipment != null && CurrentSystem is not ElectricalSystem) {
                     
                     Parameter Name = CurrentSystem.GetParameter(_KeyParameterTypeId);
                     ElementType CurrentSystemType = doc.GetElement(CurrentSystem.GetTypeId()) as ElementType;
+                    //there is also this edge case where an apparatus may have multiple connectors and be the base equipment for multiple systems
+                    //consider older multi-zone equipments where you might name AHU-1_SA for multiple SA systems.
                     List<string> NameParts = new List<string>() { 
                         CurrentSystemType.get_Parameter(BuiltInParameter.RBS_SYSTEM_ABBREVIATION_PARAM).AsValueString(),
                         BaseEquipment.get_Parameter(BuiltInParameter.ALL_MODEL_MARK).AsValueString()
