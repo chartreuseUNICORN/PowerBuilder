@@ -70,6 +70,12 @@ namespace PowerBuilder
             Log.Debug("COMPOSE RIBBON");
             CmdMgr.ComposeRibbon(a);
 
+            ParameterLinkUpdater plu = new ParameterLinkUpdater(a.ActiveAddInId);
+            Debug.WriteLine(Guid.Parse("e4e903d9-2964-4d05-b69c-045ef30afe51"));
+            plu.AddDefinitionStubPair(
+                new DefinitionStub (Guid.Parse("e4e903d9-2964-4d05-b69c-045ef30afe51")), // shared parameter "identity_identificationMark"
+                new DefinitionStub(BuiltInParameter.ALL_MODEL_MARK) // BuiltInParameter "Mark"
+                );
             #region Register Dynamic Model Updates
             //initialize updaters
             /*
