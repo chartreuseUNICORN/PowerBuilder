@@ -37,8 +37,6 @@ namespace PowerBuilder.Utils {
             List<BuiltInCategory> selectedCategories = new List<BuiltInCategory>();
             foreach (Category category in docCategories) {
                 if (category.CategoryType == catType) {
-                    ElementId cid = category.Id;
-                    
                     selectedCategories.Add(category.BuiltInCategory);
                 }
             }
