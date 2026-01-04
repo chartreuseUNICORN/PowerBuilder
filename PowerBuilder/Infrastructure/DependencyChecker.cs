@@ -1,9 +1,9 @@
-using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using System.Text;
 using PowerBuilder.Exceptions;
-using Serilog;
 using PowerBuilder.Utils;
+using Serilog;
+using System.Text;
+using RevitTaskDialog = Autodesk.Revit.UI.TaskDialog;
 
 /// <summary>
 /// Dependency Checker provides requirement validation for bindings and shared parameter usage
@@ -106,7 +106,7 @@ public class DependencyChecker
             foreach (Category target in newBindingTargets) {
                 catSetString.AppendLine(target.Name);
             }
-            TaskDialog approveNewBinding = new TaskDialog("Approve new Parameter Bindings");
+            RevitTaskDialog approveNewBinding = new RevitTaskDialog("Approve new Parameter Bindings");
             //TODO: add a way to pass the calling class to this message
             approveNewBinding.MainInstruction = $"Parameter {def.Name} required for some PowerBuilder Feature affecting these Categories"+"\n"+
                 $"{catSetString.ToString()}";

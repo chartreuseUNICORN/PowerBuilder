@@ -1,22 +1,13 @@
 #region Namespaces
-using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
-using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using PowerBuilder.Claude;
-using PowerBuilder.Extensions;
-using PowerBuilder.Interfaces;
+using PowerBuilder.Infrastructure;
+using PowerBuilder.Objects;
 using PowerBuilder.SelectionFilter;
 using PowerBuilder.Services;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text.Json.Serialization;
-using PowerBuilder.Objects;
-using System.Text.Json;
-using PowerBuilder.Infrastructure;
+using RevitTaskDialog = Autodesk.Revit.UI.TaskDialog;
 
 #endregion
 
@@ -61,7 +52,7 @@ namespace PowerBuilder.Commands
 
     Confidence: {elemClass.Confidence}";
 
-            TaskDialog.Show("Element Classification", report);
+            RevitTaskDialog.Show("Element Classification", report);
 
             return Result.Succeeded;
         }

@@ -1,18 +1,10 @@
 #region Namespaces
-using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
-using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Autodesk.Revit.UI.Selection;
-using PowerBuilder.Extensions;
 using PowerBuilder.Infrastructure;
-using PowerBuilder.Interfaces;
 using Serilog;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Runtime.CompilerServices;
+using RevitTaskDialog = Autodesk.Revit.UI.TaskDialog;
 
 #endregion
 
@@ -64,7 +56,7 @@ namespace PowerBuilder.Commands
                 }
             }
             else {
-                TaskDialog msg = new TaskDialog("Add Parameters");
+                RevitTaskDialog msg = new RevitTaskDialog("Add Parameters");                
                 msg.MainContent = "Run this command in a Family Document";
                 msg.Show();
             }

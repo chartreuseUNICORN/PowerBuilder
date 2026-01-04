@@ -1,26 +1,15 @@
 #region Namespaces
-using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
-using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Analysis;
 using Autodesk.Revit.DB.Architecture;
-using Autodesk.Revit.DB.Mechanical;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using PowerBuilder.Claude;
-using PowerBuilder.Extensions;
 using PowerBuilder.Infrastructure;
-using PowerBuilder.Interfaces;
 using PowerBuilder.Objects;
 using PowerBuilder.SelectionFilter;
 using PowerBuilder.Services;
-using PowerBuilder.Services;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using RevitTaskDialog = Autodesk.Revit.UI.TaskDialog;
 
 #endregion
 
@@ -45,7 +34,11 @@ namespace PowerBuilder.Commands
                 new FilteredElementCollector(doc)
                 .OfClass(typeof(HVACLoadSpaceType))
                 .ToElements()
+#if REVIT2024_OR_GREATER
                 .ToDictionary(x => Convert.ToString(x.Id.Value), x => x.Name));
+#else
+                .ToDictionary(x => Convert.ToString(x.Id.IntegerValue), x => x.Name));
+#endif
             ElementClassifier SpaceClassifier = new ElementClassifier(spaceTypeDefs);
 
             Selection sel = uidoc.Selection;
@@ -69,7 +62,7 @@ namespace PowerBuilder.Commands
 
     Confidence: {elemClass.Confidence}";
 
-            TaskDialog.Show("Element Classification", report);
+            RevitTaskDialog.Show("Element Classification", report);
 
             return Result.Succeeded;
         }

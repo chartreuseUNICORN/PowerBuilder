@@ -112,8 +112,8 @@ namespace PowerBuilder.Services {
                 //Debug.WriteLine($"\tRegisterOverrides: {cat.Name}");
                 List<OverrideGraphicSettings> CategoryOverrides = new List<OverrideGraphicSettings>();
                 foreach (Autodesk.Revit.DB.View view in _ViewSequence) {
-                    List<long> LayerNotControlledParameterIds = view.GetNonControlledTemplateParameterIds().Select(x => x.Value).ToList();
-                    if (!LayerNotControlledParameterIds.Contains((long)obip) && !view.GetCategoryHidden(cat.Id) && cat.get_AllowsVisibilityControl(view)) {
+                    List<ElementId> LayerNotControlledParameterIds = view.GetNonControlledTemplateParameterIds().Select(x => x).ToList();
+                    if (!LayerNotControlledParameterIds.Contains(new ElementId(obip)) && !view.GetCategoryHidden(cat.Id) && cat.get_AllowsVisibilityControl(view)) {
                         //Debug.WriteLine($"\t\t{obip} in ViewTemplate: {view.Name} => get {cat.Name} overrides");
 
                         CategoryOverrides.Add(view.GetCategoryOverrides(cat.Id));

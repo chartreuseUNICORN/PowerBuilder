@@ -98,7 +98,13 @@ namespace PowerBuilder.Commands
 
                     Is checking something about subcategories a different thing?
                  * */
-                if (depElement.OwnerViewId.Value != -1) {
+                int ownerIdValue;
+#if REVIT2024_OR_GREATER
+                ownerIdValue = depElement.OwnerViewId.Value;
+#else
+#endif
+                ownerIdValue = depElement.Id.IntegerValue;
+                if (ownerIdValue != -1) {
                     branchEid = depElement.OwnerViewId;
                 }
                 else {
