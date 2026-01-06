@@ -159,7 +159,7 @@ namespace PowerBuilder.Commands
                 comments
              */
 
-            MessageCollector.Add(e.Id.Value.ToString());
+            MessageCollector.Add(e.Id.ToString());
             MessageCollector.Add( timestamp.ToString());
             if (e.Location is LocationPoint) {
                 LocationPoint locP = e.Location as LocationPoint;

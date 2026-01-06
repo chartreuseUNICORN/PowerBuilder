@@ -32,7 +32,7 @@ namespace PowerBuilder.IUpdaters {
             Log.Debug(data.ToString());
 
             foreach (ElementId ChangedElement in data.GetModifiedElementIds()) {
-                Log.Debug($"ModifiedElement trigger {ChangedElement.Value}");
+                Log.Debug($"ModifiedElement trigger {ChangedElement.ToString()}");
                 FamilyInstance CurrentFamilyInstance = doc.GetElement(ChangedElement) as FamilyInstance;
 
                 //this is a lazy fix not using succinct LINQ expression
@@ -52,7 +52,7 @@ namespace PowerBuilder.IUpdaters {
             // how does this need to be structured with multiple triggers.  this is probably supposed to be like two functions and Map function on the different
             // UpdaterData
             foreach (ElementId ChangedElement in data.GetAddedElementIds()) {
-                Log.Debug($"AddedElement trigger {ChangedElement.Value}");
+                Log.Debug($"AddedElement trigger {ChangedElement.ToString()}");
 
                 Element CurrentSystem = doc.GetElement(ChangedElement);
                 if (CurrentSystem is MEPSystem) {

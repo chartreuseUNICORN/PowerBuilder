@@ -1,15 +1,9 @@
 #region Namespaces
-using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
-using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Autodesk.Revit.UI.Selection;
 using PowerBuilder.Infrastructure;
-using PowerBuilder.Interfaces;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+using RevitTaskDialog = Autodesk.Revit.UI.TaskDialog;
 
 #endregion
 
@@ -31,7 +25,7 @@ namespace PowerBuilder.Commands
             Document doc = uidoc.Document;
 
             Log.Information("IExternalCommand: {Name}", DisplayName);
-            TaskDialog.Show("Command1", "Hello World");
+            RevitTaskDialog.Show("Command1", "Hello World");
 
             return Result.Succeeded;
         }

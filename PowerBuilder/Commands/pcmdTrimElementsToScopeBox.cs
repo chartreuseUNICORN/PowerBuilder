@@ -1,16 +1,9 @@
 #region Namespaces
-using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
-using Autodesk.Revit.DB;
-using Autodesk.Revit.DB.Events;
 using Autodesk.Revit.UI;
-using Autodesk.Revit.UI.Selection;
 using PowerBuilder.Infrastructure;
-using PowerBuilder.Interfaces;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+using RevitTaskDialog = Autodesk.Revit.UI.TaskDialog;
 
 #endregion
 
@@ -45,7 +38,7 @@ namespace PowerBuilder.Commands
                 }
             }
             else {
-                TaskDialog notice = new TaskDialog(DisplayName);
+                RevitTaskDialog notice = new RevitTaskDialog(DisplayName);
                 notice.MainContent = "Command cannot function in a Family Document";
                 notice.Show();
             }

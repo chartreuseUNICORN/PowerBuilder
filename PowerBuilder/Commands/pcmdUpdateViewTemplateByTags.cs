@@ -143,8 +143,14 @@ namespace PowerBuilder.Commands
                 //redundant category checks should be eliminated
                 //if we're doing a 'transparent' overrides merge, then redundant category checking is probably ok.
                 foreach (ElementId lap in LayerAffectedParameters) {
-                    if (_overrideParameters.Contains((BuiltInParameter)(lap.Value))) {
-                        MergeGraphicOverrideStrategy((BuiltInParameter)(lap.Value), ViewTemplate, ViewLayer);
+                    long lapValue;
+#if REVIT2024_OR_GREATER
+                    lapValue = lap.Value;
+#else
+                    lapValue = (long)lap.IntegerValue;
+#endif
+                    if (_overrideParameters.Contains((BuiltInParameter)(lapValue))) {
+                        MergeGraphicOverrideStrategy((BuiltInParameter)(lapValue), ViewTemplate, ViewLayer);
                     }
                 }
                 ViewTemplate.SetNonControlledTemplateParameterIds(TemplateParameters);

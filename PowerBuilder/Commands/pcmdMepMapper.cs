@@ -1,22 +1,12 @@
 #region Namespaces
-using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
-using Autodesk.Revit.DB;
-using Autodesk.Revit.DB.Mechanical;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Microsoft.Msagl.Drawing;
 using PowerBuilder.Infrastructure;
-using PowerBuilder.Interfaces;
 using PowerBuilder.SelectionFilter;
-using PowerBuilder.Utils;
 using QuickGraph;
-using QuickGraph.Graphviz;
-using QuikGraph.MSAGL;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using RevitTaskDialog = Autodesk.Revit.UI.TaskDialog;
 
 #endregion
 
@@ -41,7 +31,7 @@ namespace PowerBuilder.Commands
             MEPSystem Target = doc.GetElement(res.SelectionResults[0] as ElementId) as MEPSystem;
             AdjacencyGraph<ElementId, Edge<ElementId>> SystemGraph = MEPSystemToAdjacencyGraph(Target);
 
-            TaskDialog.Show("MEPmapper", "System graph generated");
+            RevitTaskDialog.Show("MEPmapper", "System graph generated");
             
             
 

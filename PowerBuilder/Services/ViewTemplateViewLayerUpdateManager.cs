@@ -1,13 +1,7 @@
-﻿using Autodesk.Revit.DB;
-using Autodesk.Revit.UI;
-using PowerBuilder.Services;
+﻿using Autodesk.Revit.UI;
 using QuickGraph;
 using QuickGraph.Algorithms.TopologicalSort;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using RevitTaskDialog = Autodesk.Revit.UI.TaskDialog;
 
 namespace PowerBuilder.Services {
     /// <summary>
@@ -108,7 +102,7 @@ namespace PowerBuilder.Services {
                 }
             }
             catch (NonAcyclicGraphException Ex) {
-                TaskDialog.Show("Circular Dependencies Detected", Ex.Message);
+                RevitTaskDialog.Show("Circular Dependencies Detected", Ex.Message);
             }
 
         }

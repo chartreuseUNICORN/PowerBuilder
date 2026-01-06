@@ -122,7 +122,7 @@ namespace PowerBuilder.Services {
         {
             Parameter SpecifiedAirflow = Space.get_Parameter(BuiltInParameter.ROOM_DESIGN_SUPPLY_AIRFLOW_PARAM);
             ForgeTypeId AirflowUnit = SpecifiedAirflow.GetUnitTypeId();
-            double SpecifiedAirflowValue = UnitUtils.ConvertFromInternalUnits(SpecifiedAirflow.AsDouble(), AirflowUnit);
+            double SpecifiedAirflowValue = Math.Round(UnitUtils.ConvertFromInternalUnits(SpecifiedAirflow.AsDouble(), AirflowUnit));
 
             int AirTerminalQuantity = AirTerminals.Count();
 
@@ -133,9 +133,9 @@ namespace PowerBuilder.Services {
             double NewAirflow = RoundedAirflow / (double)AirTerminalQuantity;
             double NewAirflowCeil = Math.Ceiling(NewAirflow / 5.0) * 5;
             double NewAirflowFloor = NewAirflowCeil - 5.0;
-            //int QtyCeil = ((AirTerminalQuantity - (RoundedAirflow / NewAirflowFloor)) / (1 - (NewAirflowCeil / NewAirflowFloor)));
-            int QtyFloor = (int)RoundedAirflow % AirTerminalQuantity;
-            int QtyCeil = AirTerminalQuantity - QtyFloor;
+            int QtyCeil = (int)((RoundedAirflow - NewAirflowFloor * AirTerminalQuantity) / (NewAirflowCeil - NewAirflowFloor));
+            int QtyFloor = (int)(AirTerminalQuantity-QtyCeil);
+            //int QtyCeil = AirTerminalQuantity - QtyFloor;
 
             List<double> NewAirflowValues = new List<double>(Enumerable.Repeat(NewAirflowCeil, QtyCeil));
             Element[] AirTerminalArray = AirTerminals.ToArray();

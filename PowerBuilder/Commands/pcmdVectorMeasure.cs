@@ -1,14 +1,8 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.UI;
-using PowerBuilder.Forms;
-using PowerBuilder.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autodesk.Revit.UI.Selection;
 using PowerBuilder.Infrastructure;
+using RevitTaskDialog = Autodesk.Revit.UI.TaskDialog;
 
 namespace PowerBuilder.Commands {
     [Transaction(TransactionMode.Manual)]
@@ -33,7 +27,7 @@ namespace PowerBuilder.Commands {
 
             Message = $"x: {Displacement.X.ToInches()} in.\ny: {Displacement.Y.ToInches()} in.\nz: {Displacement.Z.ToInches()} in.\n\nlength: {Displacement.GetLength().ToInches()} in.";
 
-            TaskDialog.Show(DisplayName, Message);
+            RevitTaskDialog.Show(DisplayName, Message);
 
             return Result.Succeeded;
         }
