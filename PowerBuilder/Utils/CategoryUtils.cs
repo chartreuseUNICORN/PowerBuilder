@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace PowerBuilder.Utils {
     public class CategoryUtils {
-    
-    public static CategorySet GetProjectParameterCategories (Document doc, string ParameterName) {
+
+        public static CategorySet GetProjectParameterCategories(Document doc, string ParameterName) {
 
             BindingMap ProjectParametersMap = doc.ParameterBindings;
             //How does this want to address parameters with the same names..
@@ -19,7 +19,7 @@ namespace PowerBuilder.Utils {
             throw new KeyNotFoundException($"{ParameterName} not a valid Key");
         }
 
-    public static CategorySet GetProjectParameterCategories (Document doc, Definition Parameter) {
+        public static CategorySet GetProjectParameterCategories(Document doc, Definition Parameter) {
             BindingMap ProjectParametersMap = doc.ParameterBindings;
 
             if (ProjectParametersMap.Contains(Parameter)) {
@@ -29,6 +29,18 @@ namespace PowerBuilder.Utils {
             else {
                 throw new KeyNotFoundException($"{Parameter.ToString()} not a valid Key");
             }
+        }
+
+        public static ICollection<BuiltInCategory> GetCategoriesByType(Document doc, CategoryType catType) {
+            Settings settings = doc.Settings;
+            Categories docCategories = settings.Categories;
+            List<BuiltInCategory> selectedCategories = new List<BuiltInCategory>();
+            foreach (Category category in docCategories) {
+                if (category.CategoryType == catType) {
+                    selectedCategories.Add(category.BuiltInCategory);
+                }
+            }
+            return selectedCategories;
         }
     }
 }
