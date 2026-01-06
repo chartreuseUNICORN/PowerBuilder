@@ -21,7 +21,7 @@ namespace PowerBuilder.Extensions {
         public static string ToJson(this Element e) {
             try {
                 Dictionary<string, string> data = new Dictionary<string, string> {
-                    { "ElementId" ,e.Id.Value.ToString()},
+                    { "ElementId" ,e.Id.ToString()},
                     { "Name", e.Name ?? "Unnamed" },
                     { "Document", e.Document?.Title ?? "Unknown Document" },
                     { "Category", e.Category ?.Name ?? "Unknown" },
@@ -29,7 +29,13 @@ namespace PowerBuilder.Extensions {
                     { "Parameters", JsonSerializer.Serialize(ExtractParameters(e), JsonOptions) }
                 };
 
-                if(e.GetTypeId().Value != -1) {
+                long elementTypeIdValue;
+#if REVIT2024_OR_GREATER
+                elementTypeIdValue = e.GetTypeId().Value;
+#else
+                elementTypeIdValue = (long)e.GetTypeId().IntegerValue;
+#endif
+                if(elementTypeIdValue != -1) {
                     Document doc = e.Document;
                     Element eType = doc.GetElement(e.GetTypeId());
                     string typeData = eType.ToJson();
@@ -41,7 +47,12 @@ namespace PowerBuilder.Extensions {
             catch (Exception ex) {
                 // Fallback serialization if extraction fails
                 var fallbackData = new {
-                    ElementId = e.Id.Value,
+#if REVIT2024_OR_GREATER
+ElementId = e.Id.Value,
+#else
+ElementId = e.Id.IntegerValue,
+#endif
+                    
                     Name = e.Name ?? "Unnamed",
                     Document = e.Document?.Title ?? "Unknown Document",
                     Category = e.Category?.Name ?? "Unknown",

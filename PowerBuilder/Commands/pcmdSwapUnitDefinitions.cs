@@ -1,18 +1,12 @@
 #region Namespaces
-using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
-using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Autodesk.Revit.UI.Selection;
 using PowerBuilder.Extensions;
 using PowerBuilder.Infrastructure;
-using PowerBuilder.Interfaces;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 using System.Xml;
+using RevitTaskDialog = Autodesk.Revit.UI.TaskDialog;
 
 #endregion
 
@@ -56,7 +50,7 @@ namespace PowerBuilder.Commands
                 Log.Debug($"No units file found.");
                 //TODO improve this UX. this should launch a file dialog as follows
                 //  OK to create a swap file from active document
-                TaskDialog MissingFileDialog = new TaskDialog("Swap Units Specification");
+                RevitTaskDialog MissingFileDialog = new RevitTaskDialog("Swap Units Specification");
                 MissingFileDialog.MainContent = "Swap file not found. Click OK to create swap file from Active Document";
                 MissingFileDialog.Show();
                 ExportControl = MissingFileDialog.DefaultButton == TaskDialogResult.Ok;

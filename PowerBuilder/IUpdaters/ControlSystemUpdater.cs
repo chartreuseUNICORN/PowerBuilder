@@ -17,23 +17,22 @@ namespace PowerBuilder.IUpdaters {
     /// TODO: Configure/Register updaters
     internal class ControlSystemUpdater : DocumentScopeUpdater, IUpdater {
 
-        static private UpdaterId _uid;
-        static private AddInId _appId;
-        static private ChangePriority _changePriority;
+        protected override string _name => "Control System Updater";
+        protected override string _description => "Mantain association between equipment and sensors in Control circuits";
+        public override bool LoadOnStartup => true;
         static private ForgeTypeId _KeyParameterTypeId;
-        public bool LoadOnStartup { get; set; } = true; //this should be required as part of IPowerUpdater (or base class?)
         public ControlSystemUpdater (AddInId id) {
             
-            _appId = id;
-            _uid = new UpdaterId(_appId, new Guid("8E28B1E7-1626-4978-82B2-7EB46084C9E8"));
+            _addInId = id;
+            _uid = new UpdaterId(_addInId, new Guid("8E28B1E7-1626-4978-82B2-7EB46084C9E8"));
         }
-        public void Execute (UpdaterData data) {
+        public override void Execute (UpdaterData data) {
             
             Document doc = data.GetDocument();
             Log.Debug(data.ToString());
 
             foreach (ElementId ChangedElement in data.GetModifiedElementIds()) {
-                Log.Debug($"ModifiedElement trigger {ChangedElement.Value}");
+                Log.Debug($"ModifiedElement trigger {ChangedElement.ToString()}");
                 FamilyInstance CurrentFamilyInstance = doc.GetElement(ChangedElement) as FamilyInstance;
 
                 //this is a lazy fix not using succinct LINQ expression
@@ -53,7 +52,7 @@ namespace PowerBuilder.IUpdaters {
             // how does this need to be structured with multiple triggers.  this is probably supposed to be like two functions and Map function on the different
             // UpdaterData
             foreach (ElementId ChangedElement in data.GetAddedElementIds()) {
-                Log.Debug($"AddedElement trigger {ChangedElement.Value}");
+                Log.Debug($"AddedElement trigger {ChangedElement.ToString()}");
 
                 Element CurrentSystem = doc.GetElement(ChangedElement);
                 if (CurrentSystem is MEPSystem) {
@@ -87,18 +86,6 @@ namespace PowerBuilder.IUpdaters {
             //does this need to be handled as an exception?
             
         }
-        public string GetUpdaterName() {
-            return "Control System Updater";
-        }
-        public UpdaterId GetUpdaterId() {
-            return _uid;
-        }
-        public ChangePriority GetChangePriority() {
-            return _changePriority;
-        }
-        public string GetAdditionalInformation() {
-            return "no additional information";
-        }
         public override void updater_OnDocumentOpened (object sender, DocumentOpenedEventArgs args) {
             
             Log.Debug($"{args.Document.Title} opened");
@@ -114,12 +101,6 @@ namespace PowerBuilder.IUpdaters {
             catch (Exception ex) {
                 Log.Debug($"{this.GetType()} Trigger Failed: {ex.Message}");
             }
-        }
-        
-        public void updater_OnDocumentClosing (object sender, DocumentClosingEventArgs args) {
-            UpdaterRegistry.RemoveDocumentTriggers(_uid, args.Document);
-
-            Debug.WriteLine($"-TRIGGER REMOVED: {args.Document.Title}");
         }
     }
 }

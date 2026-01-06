@@ -18,5 +18,11 @@ namespace PowerBuilder.Utils {
                 outFile.WriteLine(message);
             }
         }
+
+        public static string GetManagedParameterPath() {
+            string root = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string managedParameterPath = root + "PB_SharedParameters.txt";
+            return managedParameterPath;
+        }
     }
 }
