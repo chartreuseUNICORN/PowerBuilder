@@ -29,11 +29,11 @@ namespace PowerBuilder.Extensions {
                     { "Parameters", JsonSerializer.Serialize(ExtractParameters(e), JsonOptions) }
                 };
 
-                int elementTypeIdValue;
+                long elementTypeIdValue;
 #if REVIT2024_OR_GREATER
                 elementTypeIdValue = e.GetTypeId().Value;
 #else
-                elementTypeIdValue = e.GetTypeId().IntegerValue;
+                elementTypeIdValue = (long)e.GetTypeId().IntegerValue;
 #endif
                 if(elementTypeIdValue != -1) {
                     Document doc = e.Document;
