@@ -18,7 +18,8 @@ namespace PowerBuilder.IUpdaters {
         protected override string _name => "Callout Blocking Updater";
         protected override string _description => "Dynamic management of element visibility in relation to callout context";
         public override bool LoadOnStartup => true;
-
+        
+        static private Definition _KeyParameter;
         
 
 
@@ -37,21 +38,21 @@ namespace PowerBuilder.IUpdaters {
 
             if (callouts.Count > 0) {
                 foreach (ElementId ChangedElement in data.GetAddedElementIds()) {
-                    Element e = doc.GetElement(ChangedElement);
+                Element e = doc.GetElement(ChangedElement);
                     foreach (ElementId cvid in callouts) {
                         Element cViewer = doc.GetElement(cvid);
                         BoundingBoxXYZ bbox = cViewer.get_BoundingBox(activeView);
-                        Location loc = e.Location;
-                        XYZ checkPoint;
-                        if (loc is LocationPoint) {
-                            checkPoint = loc.Cast<LocationPoint>().Point;
-                        }
-                        else if (loc is LocationCurve) {
-                            checkPoint = loc.Cast<LocationCurve>().Curve.Evaluate(0.5, false);
-                        }
-                        else {
-                            continue;
-                        }
+                    Location loc = e.Location;
+                    XYZ checkPoint;
+                    if (loc is LocationPoint) {
+                         checkPoint = loc.Cast<LocationPoint>().Point;
+                    }
+                    else if (loc is LocationCurve) {
+                        checkPoint = loc.Cast<LocationCurve>().Curve.Evaluate(0.5, false);
+                    }
+                    else {
+                        continue;
+                    }
                         BoundingBoxContainsPointFilter bbcpf = new BoundingBoxContainsPointFilter(checkPoint);
                         bool checkWithbbcpf = bbcpf.PassesFilter(cViewer); //TODO: use the built in filter instead of this brute force check
                         bool checkBruteForce = BoundingBoxContains(bbox, checkPoint);
@@ -62,6 +63,7 @@ namespace PowerBuilder.IUpdaters {
                         }
                     }
                 }
+                
             }
             Debug.WriteLine($"IUpdater COMPLETE: {data.GetModifiedElementIds().Count} items changed");
         }
