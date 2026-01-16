@@ -11,6 +11,8 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using RevitTaskDialog = Autodesk.Revit.UI.TaskDialog;
+using RvtView = Autodesk.Revit.DB.View;
 
 #endregion
 
@@ -30,31 +32,19 @@ namespace PowerBuilder.Commands
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
             Document doc = uidoc.Document;
-            string UnitsXmlName = "UNITS";
-            string UnitsFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PowerBuilder\\" + UnitsXmlName + ".xml";
 
             Log.Debug($"{this.GetType()}");
             
-            Log.Debug("TEST-SERIALIZE-XML");
-            Units docUnits = doc.GetUnits();
-            docUnits.ExportToXml(UnitsFile);
-            //IList<ForgeTypeId> modifiableSpecs = Units.GetModifiableSpecs();
-            /*
-            foreach (ForgeTypeId currentSpec in modifiableSpecs) {
-                Log.Debug($"{currentSpec.TypeId}");
-                FormatOptions fo = docUnits.GetFormatOptions(currentSpec);
-                Log.Debug("FORMAT OPTIONS");
-                Log.Debug($"\tSymbolTypeId:\t{fo.GetSymbolTypeId().TypeId}");
-                Log.Debug($"\tUnitTypeId:\t{fo.GetUnitTypeId()}");
-                Log.Debug($"\tAccuracy:\t{fo.Accuracy}");
-                Log.Debug($"\tRoundingMethod:\t{fo.RoundingMethod.ToString()}");
-                Log.Debug($"\tSuppressLeadingZeroes:\t{fo.SuppressLeadingZeros}");
-                Log.Debug($"\tSUppressSpaces:\t{fo.SuppressSpaces}");
-                Log.Debug($"\tSuppressTrailingZeroes:\t{fo.SuppressTrailingZeros}");
-                Log.Debug($"\tUseDefault:\t{fo.UseDefault}");
-                Log.Debug($"\tUseDigitGrouping:\t{fo.UseDigitGrouping}");
-                Log.Debug($"\tUsePlusPrefix:\t{fo.UsePlusPrefix}");
-            }*/
+            Log.Debug("Get Callout viewers or views from active plan view");
+            // 
+            RvtView activeView = uidoc.ActiveView;
+            ElementCategoryFilter getViewerFilter = new ElementCategoryFilter(BuiltInCategory.OST_Viewers);
+
+            FilteredElementCollector checkViewerCollocetor = new FilteredElementCollector(doc).WherePasses(getViewerFilter);
+            Log.Debug($"found {checkViewerCollocetor.Count()} viewers from filtered element collector");
+
+            List<ElementId> callouts = activeView.GetDependentElements(getViewerFilter).ToList();
+            Log.Debug($"found {callouts.Count} from get dependent elements");
 
             return Result.Succeeded;
         }
