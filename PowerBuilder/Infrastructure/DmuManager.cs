@@ -55,9 +55,14 @@ namespace PowerBuilder.Infrastructure {
                 */
                 try{
                     IUpdater updater = Activator.CreateInstance(dmuClass, args) as IUpdater;
-                    UpdaterRegistry.RegisterUpdater(updater);
-                    _registeredUpdaters.Add(updater);
-                    Log.Information($"\tRegistered {updater.GetUpdaterName()}");
+                    if (updater is DmuBase dmuBase && dmuBase.LoadOnStartup) {
+                        UpdaterRegistry.RegisterUpdater(updater);
+                        _registeredUpdaters.Add(updater);
+                        Log.Information($"\tRegistered {updater.GetUpdaterName()}");
+                    }
+                    else {
+                        Log.Information($"\tSkipping {updater.GetUpdaterName()}");
+                    }
                 }
                 catch (Exception e){
                     Log.Warning($"COULD NOT REGISTER {dmuClass.FullName} >> {e.Message}");

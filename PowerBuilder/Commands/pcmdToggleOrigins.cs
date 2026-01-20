@@ -1,16 +1,7 @@
-﻿using Autodesk.Revit.UI.Selection;
+﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.UI;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static UIFramework.Widget.CustomControls.NativeMethods;
-using Autodesk.Revit.Attributes;
-using PowerBuilder.Interfaces;
-using PowerBuilder.Utils;
 using PowerBuilder.Infrastructure;
+using PowerBuilder.Utils;
 
 namespace PowerBuilder.Commands
 {

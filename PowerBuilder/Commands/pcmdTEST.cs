@@ -7,6 +7,8 @@ using Autodesk.Revit.UI.Selection;
 using PowerBuilder.Extensions;
 using PowerBuilder.Infrastructure;
 using PowerBuilder.Interfaces;
+using PowerBuilder.Services;
+using PowerBuilderUI.Forms;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -34,17 +36,34 @@ namespace PowerBuilder.Commands
             Document doc = uidoc.Document;
 
             Log.Debug($"{this.GetType()}");
-            
+            // TESTS FOR CalloutBlocking
+            // 1.   CalloutBlockingManager configuration
+            // 1.1      does the fec(doc, viewid) effectively target viewers? they're dependent elements and should be visible in view, but not Owned by the view 
+            // 2.   CalloutBlockingTriggers (element, viewer)
+            // 3.   Update element visibility
+            // 4.   changes to geometry
+
+
             Log.Debug("Get Callout viewers or views from active plan view");
             // 
             RvtView activeView = uidoc.ActiveView;
-            ElementCategoryFilter getViewerFilter = new ElementCategoryFilter(BuiltInCategory.OST_Viewers);
+            CalloutBlockingManager cbm = new CalloutBlockingManager(doc, activeView, true);
 
-            FilteredElementCollector checkViewerCollocetor = new FilteredElementCollector(doc).WherePasses(getViewerFilter);
-            Log.Debug($"found {checkViewerCollocetor.Count()} viewers from filtered element collector");
+            List<long> testSelectionIds = new List<long> { 1061508, 1061511, 1061512, 1061513, 1061514, 1061516, 1061517, 1061724, 1061741, 1061743, 1061745, 1061747, 1061749, 1061751, 1333513, 1344719 };
+            List<ElementId> testSelection = testSelectionIds.Select(x => new ElementId(x)).ToList();
 
-            List<ElementId> callouts = activeView.GetDependentElements(getViewerFilter).ToList();
-            Log.Debug($"found {callouts.Count} from get dependent elements");
+            using (Transaction T = new Transaction(doc)) {
+                try {
+                    T.Start("test-callout-blocking-manager");
+
+                    cbm.AssignElementsVisibility(testSelection);
+                    T.Commit();
+                }
+                catch { 
+                    T.RollBack();
+                }
+            }
+            
 
             return Result.Succeeded;
         }

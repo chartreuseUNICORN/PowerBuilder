@@ -1,14 +1,7 @@
 #region Namespaces
-using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
-using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Autodesk.Revit.UI.Selection;
 using PowerBuilder.Infrastructure;
-using PowerBuilder.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 #endregion
 

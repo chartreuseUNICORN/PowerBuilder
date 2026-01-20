@@ -42,5 +42,32 @@ namespace PowerBuilder.Utils {
             }
             return selectedCategories;
         }
+
+        public static List<BuiltInCategory> GetMepModeElements() {
+
+            List<BuiltInCategory> cats = new List<BuiltInCategory>() { 
+                BuiltInCategory.OST_DuctTerminal,
+                BuiltInCategory.OST_DuctCurves,
+                BuiltInCategory.OST_DuctFitting,
+                BuiltInCategory.OST_DuctAccessory,
+                BuiltInCategory.OST_MechanicalEquipment,
+                BuiltInCategory.OST_ElectricalEquipment,
+                BuiltInCategory.OST_ElectricalFixtures,
+                BuiltInCategory.OST_DataDevices,
+                BuiltInCategory.OST_CommunicationDevices,
+                BuiltInCategory.OST_LightingDevices,
+                BuiltInCategory.OST_LightingFixtures,
+                BuiltInCategory.OST_PlumbingFixtures,
+                BuiltInCategory.OST_PipeAccessory,
+                BuiltInCategory.OST_PipeCurves,
+                BuiltInCategory.OST_PipeFitting,
+                BuiltInCategory.OST_FireAlarmDevices,
+            };
+#if REVIT2024_OR_GREATER
+            cats.Add(BuiltInCategory.OST_PlumbingEquipment);
+            cats.Add(BuiltInCategory.OST_MechanicalControlDevices);
+#endif
+            return cats;
+        }
     }
 }
